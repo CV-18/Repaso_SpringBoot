@@ -1,20 +1,23 @@
 package Albumes.services;
 
+import Albumes.dto.AlbumCreateDto;
+import Albumes.dto.AlbumResponseDto;
+import Albumes.dto.AlbumUpdateDto;
 import Albumes.models.Album;
 
 
 import java.util.List;
 
 public interface AlbumesService {
-    List<Album> findAll(String nombre, String banda);
+    List<AlbumResponseDto> findAll(String nombre, String banda);
 
-    Album findById(Long id);
+    AlbumResponseDto findById(Long id);
 
-    Album findbyUuid(String uuid);
+    AlbumResponseDto findbyUuid(String uuid);
 
-    Album save(Album album);
+    AlbumResponseDto save(AlbumCreateDto albumCreateDto);
 
-    Album update(Long id, Album album);
+    AlbumResponseDto update(Long id, AlbumUpdateDto albumUpdateDto);
 
     void deleteById(Long id);
 

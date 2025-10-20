@@ -1,7 +1,7 @@
-package Albumes.repository;
+package com.carlosvc.repaso_springboot.Albumes.repository;
 
 
-import Albumes.models.Album;
+import com.carlosvc.repaso_springboot.Albumes.models.Album;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 

@@ -1,0 +1,38 @@
+###getAlbumes
+GET http://localhost:3000/api/v1/Albumes
+
+###getAlbumes
+GET http://localhost:3000/api/v1/Albumes/1
+
+###getAlbumesBanda
+GET http://localhost:3000/api/v1/Albumes?banda=Dissection
+
+###getAlbumes No existente
+GET http://localhost:3000/api/v1/Albumes/4
+
+###nuevoAlbum
+POST http://localhost:3000/api/v1/Albumes
+Content-Type: application/json
+
+{
+    "nombre": "Totenlider",
+    "anio": 2005,
+    "banda": "Absurd",
+    "genero": "Black Metal",
+    "precio": 14.80
+}
+
+
+
+###actualizar
+PUT http://localhost:3000/api/v1/Albumes
+Content-Type: application/json
+
+{
+  "nombre": "Burzum",
+  "anio": "2006",
+  "banda": "Burzum",
+  "genero": "Black Metal",
+  "precio": 16.80
+}
+

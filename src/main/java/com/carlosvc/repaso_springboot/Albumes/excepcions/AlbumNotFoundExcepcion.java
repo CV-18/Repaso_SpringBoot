@@ -1,4 +1,4 @@
-package Albumes.excepcions;
+package com.carlosvc.repaso_springboot.Albumes.excepcions;
 
 import java.util.UUID;
 

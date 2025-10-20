@@ -1,4 +1,4 @@
-package Albumes.dto;
+package com.carlosvc.repaso_springboot.Albumes.models;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-public class AlbumResponseDto {
+public class Album {
     private final Long id;
 
     private final String nombre;

@@ -1,9 +1,8 @@
-package Albumes.services;
+package com.carlosvc.repaso_springboot.Albumes.services;
 
-import Albumes.dto.AlbumCreateDto;
-import Albumes.dto.AlbumResponseDto;
-import Albumes.dto.AlbumUpdateDto;
-import Albumes.models.Album;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumCreateDto;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumResponseDto;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
 
 
 import java.util.List;

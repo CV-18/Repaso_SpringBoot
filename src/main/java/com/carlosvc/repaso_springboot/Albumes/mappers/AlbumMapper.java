@@ -1,14 +1,16 @@
-package Albumes.mappers;
+package com.carlosvc.repaso_springboot.Albumes.mappers;
 
-import Albumes.dto.AlbumCreateDto;
-import Albumes.dto.AlbumResponseDto;
-import Albumes.dto.AlbumUpdateDto;
-import Albumes.models.Album;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumCreateDto;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumResponseDto;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
+import com.carlosvc.repaso_springboot.Albumes.models.Album;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Component
 public class AlbumMapper {
     public Album toAlbum(Long id, AlbumCreateDto albumCreateDto){
         return new Album(

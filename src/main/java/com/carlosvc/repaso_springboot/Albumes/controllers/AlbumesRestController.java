@@ -1,10 +1,10 @@
-package Albumes.controllers;
+package com.carlosvc.repaso_springboot.Albumes.controllers;
 
-import Albumes.dto.AlbumCreateDto;
-import Albumes.dto.AlbumResponseDto;
-import Albumes.dto.AlbumUpdateDto;
-import Albumes.models.Album;
-import Albumes.services.AlbumesService;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumCreateDto;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumResponseDto;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
+import com.carlosvc.repaso_springboot.Albumes.services.AlbumesService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,19 +42,20 @@ public class AlbumesRestController {
     }
 
     @PostMapping()
-    public ResponseEntity<AlbumResponseDto> create(@RequestBody AlbumCreateDto albumCreateDto) {
+    public ResponseEntity<AlbumResponseDto> create(@Valid @RequestBody AlbumCreateDto albumCreateDto) {
+        log.info("Creando album {}", albumCreateDto);
         var saved = albumesService.save(albumCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AlbumResponseDto> update(@PathVariable Long id, @RequestBody AlbumUpdateDto albumUpdateDto) {
+    public ResponseEntity<AlbumResponseDto> update(@Valid @PathVariable Long id, @RequestBody AlbumUpdateDto albumUpdateDto) {
         log.info("Actualizando album id={} con album={}", id, albumUpdateDto);
         return ResponseEntity.ok(albumesService.update(id, albumUpdateDto));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<AlbumResponseDto> updatePartial(@PathVariable Long id, @RequestBody AlbumUpdateDto albumUpdateDto) {
+    public ResponseEntity<AlbumResponseDto> updatePartial(@Valid @PathVariable Long id, @RequestBody AlbumUpdateDto albumUpdateDto) {
         log.info("Actualizando parcialmente album con id={} con album={}",id, albumUpdateDto);
         return ResponseEntity.ok(albumesService.update(id, albumUpdateDto));
     }

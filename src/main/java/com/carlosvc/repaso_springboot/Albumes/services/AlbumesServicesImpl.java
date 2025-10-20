@@ -1,13 +1,13 @@
-package Albumes.services;
+package com.carlosvc.repaso_springboot.Albumes.services;
 
 
-import Albumes.dto.AlbumCreateDto;
-import Albumes.dto.AlbumResponseDto;
-import Albumes.dto.AlbumUpdateDto;
-import Albumes.excepcions.AlbumNotFoundExcepcion;
-import Albumes.mappers.AlbumMapper;
-import Albumes.models.Album;
-import Albumes.repository.AlbumRepository;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumCreateDto;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumResponseDto;
+import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
+import com.carlosvc.repaso_springboot.Albumes.excepcions.AlbumNotFoundExcepcion;
+import com.carlosvc.repaso_springboot.Albumes.mappers.AlbumMapper;
+import com.carlosvc.repaso_springboot.Albumes.models.Album;
+import com.carlosvc.repaso_springboot.Albumes.repository.AlbumRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -62,6 +62,7 @@ public class AlbumesServicesImpl implements AlbumesService{
         return albumMapper.toAlbumResponseDto(albumRepository.findById(id)
                 .orElseThrow(() -> new AlbumNotFoundExcepcion(id)));
     }
+
 
     @Cacheable(key = "#uuid")
     @Override

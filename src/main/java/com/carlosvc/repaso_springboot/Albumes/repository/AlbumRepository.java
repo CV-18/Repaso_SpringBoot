@@ -1,6 +1,6 @@
-package Albumes.repository;
+package com.carlosvc.repaso_springboot.Albumes.repository;
 
-import Albumes.models.Album;
+import com.carlosvc.repaso_springboot.Albumes.models.Album;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,4 +29,5 @@ public interface AlbumRepository {
     void deleteByUuid(UUID uuid);
 
     Long nextId();
+
 }

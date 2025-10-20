@@ -1,9 +1,9 @@
-package Albumes.dto;
+package com.carlosvc.repaso_springboot.Albumes.dto;
 
 import lombok.Data;
 
 @Data
-public class AlbumCreateDto {
+public class AlbumUpdateDto {
     private final String nombre;
     private final Integer anio;
     private final String banda;

@@ -1,7 +1,7 @@
-package Albumes.repository;
+package com.carlosvc.repaso_springboot.Albumes.repository;
 
 
-import Albumes.models.Album;
+import com.carlosvc.repaso_springboot.Albumes.models.Album;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +17,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
                             "Somberlain",
                             1993,
                             "Dissection",
+                            "Black Metal",
                             19.90,
                             LocalDateTime.now(),
                             LocalDateTime.now(),
@@ -26,6 +27,7 @@ public class AlbumRepositoryImpl implements AlbumRepository {
                             "Draugen",
                             2005,
                             "Burzum",
+                            "Black Metal",
                             16.90,
                             LocalDateTime.now(),
                             LocalDateTime.now(),

@@ -13,25 +13,30 @@ import java.util.*;
 public class AlbumRepositoryImpl implements AlbumRepository {
     private final Map<Long, Album>albumes = new LinkedHashMap<>(
             Map.of(
-                    1l, new Album(1l,
-                            "Somberlain",
-                            1993,
-                            "Dissection",
-                            "Black Metal",
-                            19.90,
-                            LocalDateTime.now(),
-                            LocalDateTime.now(),
-                            UUID.randomUUID()),
+                    1l, Album.builder()
+                            .id(1l)
+                            .nombre("The Somberline")
+                            .anio(1993)
+                            .banda("Dissection")
+                            .genero("Black Metal")
+                            .precio(19.90)
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .uuid(UUID.randomUUID())
+                            .build(),
 
-                    2l,new Album(2l,
-                            "Draugen",
-                            2005,
-                            "Burzum",
-                            "Black Metal",
-                            16.90,
-                            LocalDateTime.now(),
-                            LocalDateTime.now(),
-                            UUID.randomUUID())
+                    2l, Album.builder()
+                            .id(2l)
+                            .nombre("Draugen")
+                            .anio(2005)
+                            .banda("Burzum")
+                            .genero("Black Metal")
+                            .precio(16.90)
+                            .createdAt(LocalDateTime.now())
+                            .updatedAt(LocalDateTime.now())
+                            .uuid(UUID.randomUUID())
+                            .build()
+
             )
     );
 
@@ -55,6 +60,12 @@ public class AlbumRepositoryImpl implements AlbumRepository {
         return albumes.values().stream()
                 .filter(album -> album.getBanda().toLowerCase().contains(banda.toLowerCase()))
                 .toList();
+    }
+
+    @Override
+    public Optional<Album> findByGenero(String genero) {
+        log.info("Buscando albumes por genero: " + genero);
+        return albumes.get(genero) != null ? Optional.of(albumes.get(genero)) : Optional.empty();
     }
 
     @Override

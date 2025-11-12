@@ -10,6 +10,8 @@ import java.util.List;
 public interface AlbumesService {
     List<AlbumResponseDto> findAll(String nombre, String banda);
 
+    AlbumResponseDto findByGenero(String genero);
+
     AlbumResponseDto findById(Long id);
 
     AlbumResponseDto findbyUuid(String uuid);

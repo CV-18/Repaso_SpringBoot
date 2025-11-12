@@ -11,6 +11,7 @@ public interface AlbumRepository {
     List<Album> findAllByNombre(String nombre);
 
     List<Album> findAllByBanda(String banda);
+    Optional<Album> findByGenero(String genero);
 
     List<Album> findAllByNombreAndBanda(String nombre, String banda);
 

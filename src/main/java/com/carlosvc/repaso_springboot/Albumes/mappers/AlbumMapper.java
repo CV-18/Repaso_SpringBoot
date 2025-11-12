@@ -13,45 +13,46 @@ import java.util.UUID;
 @Component
 public class AlbumMapper {
     public Album toAlbum(Long id, AlbumCreateDto albumCreateDto){
-        return new Album(
-                id,
-                albumCreateDto.getNombre(),
-                albumCreateDto.getAnio(),
-                albumCreateDto.getBanda(),
-                albumCreateDto.getGenero(),
-                albumCreateDto.getPrecio(),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                UUID.randomUUID()
-        );
+        return Album.builder()
+                .id(id)
+                .nombre(albumCreateDto.getNombre())
+                .anio(albumCreateDto.getAnio())
+                .banda(albumCreateDto.getBanda())
+                .genero(albumCreateDto.getGenero())
+                .precio(albumCreateDto.getPrecio())
+                .uuid(UUID.randomUUID())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
     }
 
     public Album toAlbum(AlbumUpdateDto albumUpdateDto, Album album){
-        return new Album(
-                album.getId(),
-                albumUpdateDto.getNombre() != null ? albumUpdateDto.getNombre() : album.getNombre(),
-                albumUpdateDto.getAnio() != null ? albumUpdateDto.getAnio() : album.getAnio(),
-                albumUpdateDto.getBanda() != null ? albumUpdateDto.getBanda() : album.getBanda(),
-                albumUpdateDto.getGenero() != null ? albumUpdateDto.getGenero() : album.getGenero(),
-                albumUpdateDto.getPrecio() != null ? albumUpdateDto.getPrecio() : album.getPrecio(),
-                album.getCreatedAt(),
-                LocalDateTime.now(),
-                album.getUuid()
-        );
+        return Album.builder()
+                .id(album.getId())
+                .nombre(albumUpdateDto.getNombre() != null ? albumUpdateDto.getNombre() : album.getNombre())
+                .anio(albumUpdateDto.getAnio() != null ? albumUpdateDto.getAnio() : album.getAnio())
+                .banda(albumUpdateDto.getBanda() != null ? albumUpdateDto.getBanda() : album.getBanda())
+                .genero(albumUpdateDto.getGenero() != null ? albumUpdateDto.getGenero() : album.getGenero())
+                .precio(albumUpdateDto.getPrecio() != null ? albumUpdateDto.getPrecio() : album.getPrecio())
+                .createdAt(album.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .uuid(album.getUuid())
+                .build();
     }
 
     public AlbumResponseDto toAlbumResponseDto(Album album){
-        return new AlbumResponseDto(
-                album.getId(),
-                album.getNombre(),
-                album.getAnio(),
-                album.getBanda(),
-                album.getGenero(),
-                album.getPrecio(),
-                album.getCreatedAt(),
-                album.getUpdatedAt(),
-                album.getUuid()
-        );
+        return AlbumResponseDto.builder()
+                .id(album.getId())
+                .nombre(album.getNombre())
+                .anio(album.getAnio())
+                .banda(album.getBanda())
+                .genero(album.getGenero())
+                .precio(album.getPrecio())
+                .createdAt(album.getCreatedAt())
+                .updatedAt(album.getUpdatedAt())
+                .uuid(album.getUuid())
+                .build();
+
     }
 
     public List<AlbumResponseDto> toAlbumResponseDto(List<Album> albums){

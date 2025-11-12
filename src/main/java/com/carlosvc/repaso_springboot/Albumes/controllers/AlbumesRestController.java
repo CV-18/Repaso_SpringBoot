@@ -35,6 +35,13 @@ public class AlbumesRestController {
         return ResponseEntity.ok(albumesService.findAll(nombre, banda));
     }
 
+    @GetMapping("/{genero}")
+    public ResponseEntity<AlbumResponseDto> getAlbum(@PathVariable("genero") String genero) {
+        log.info("Buscando tarjetas por genero={}", genero);
+        return ResponseEntity.ok(albumesService.findByGenero(genero));
+
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<AlbumResponseDto> getById(@PathVariable Long id) {
         log.info("Buscando album por id={}", id);

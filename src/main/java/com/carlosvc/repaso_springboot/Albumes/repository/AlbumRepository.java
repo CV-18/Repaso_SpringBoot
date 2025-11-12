@@ -1,33 +1,38 @@
 package com.carlosvc.repaso_springboot.Albumes.repository;
 
 import com.carlosvc.repaso_springboot.Albumes.models.Album;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface AlbumRepository {
-    List<Album> findAll();
-    List<Album> findAllByNombre(String nombre);
+@Repository
+public interface AlbumRepository extends JpaRepository<Album, Long> {
 
-    List<Album> findAllByBanda(String banda);
+    List<Album> findByNombre(String nombre);
+    //List<Album> findByNombreAndIsDeletedFalse(String nombre);
 
-    List<Album> findAllByNombreAndBanda(String nombre, String banda);
+    @Query("SELECT al FROM Album al WHERE LOWER(al.discografica.nombre) like %:dicografica% ")
+    List<Album> findByDiscograficaContainsIgnoreCase(String discografica);
+    //List<Album> findByDiscograficaContainsIgnoreCaseAndIsDeletedFalse(String discografica);
 
-    Optional<Album> findById(Long id);
+    @Query("SELECT al FROM  Album al WHERE al.nombre =:nombre AND LOWER(al.discografica.nombre) like %:discografica%")
+    List<Album> findByNombreAndDiscograficaContainsIgnoreCase(String nombre, String discografica);
+    //List<Album> findByNombreAndDiscograficaContainsIgnoreCaseAndIsDeletedFalse(String nombre, String discografica);
+
+
 
     Optional<Album> findByUuid(UUID uuid);
-
-    boolean existsById(Long id);
-
     boolean existsByUuid(UUID uuid);
-
-    Album save(Album album);
-
-    void deleteById(Long id);
-
     void deleteByUuid(UUID uuid);
 
-    Long nextId();
+    List<Album> findByIsDeleted(Boolean isDeleted);
 
+    @Modifying
+    @Query("UPDATE Album a SET a.isDeleted =true WHERE a.id = :id")
+    void updateIsDeletedToTrueById(Long id);
 }

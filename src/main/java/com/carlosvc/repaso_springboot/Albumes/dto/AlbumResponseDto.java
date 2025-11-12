@@ -1,20 +1,27 @@
 package com.carlosvc.repaso_springboot.Albumes.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class AlbumResponseDto {
-    private final Long id;
-    private final String nombre;
-    private final Integer anio;
-    private final String banda;
-    private final String genero;
-    private final Double precio;
+    private  Long id;
+    private  String nombre;
+    private  Integer anio;
+    private  String banda;
+    private  String genero;
+    private  Double precio;
+    private String discografica;
 
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
-    private final UUID uuid;
+    private  LocalDateTime createdAt;
+    private  LocalDateTime updatedAt;
+    private  UUID uuid;
 }

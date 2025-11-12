@@ -9,6 +9,7 @@ import com.carlosvc.repaso_springboot.Albumes.excepcions.AlbumNotFoundExcepcion;
 import com.carlosvc.repaso_springboot.Albumes.mappers.AlbumMapper;
 import com.carlosvc.repaso_springboot.Albumes.models.Album;
 import com.carlosvc.repaso_springboot.Albumes.repository.AlbumRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -21,40 +22,38 @@ import java.util.UUID;
 
 @CacheConfig(cacheNames = {"albums"})
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class AlbumesServicesImpl implements AlbumesService{
     private final AlbumRepository albumRepository;
     private final AlbumMapper albumMapper;
 
-    @Autowired
-    public AlbumesServicesImpl(AlbumRepository albumRepository, AlbumMapper albumMapper) {
-        this.albumRepository = albumRepository;
-        this.albumMapper = albumMapper;
 
-    }
 
 
     @Override
-    public List<AlbumResponseDto> findAll(String nombre, String banda) {
+    public List<AlbumResponseDto> findAll(String nombre, String discografica) {
 
-        if ((nombre == null || nombre.isEmpty()) && (banda == null || banda.isEmpty())) {
+        if ((nombre == null || nombre.isEmpty()) && (discografica == null || discografica.isEmpty())) {
             log.info("Buscando todos los albumes");
             return albumMapper.toAlbumResponseDto(albumRepository.findAll());
         }
 
-        if ((nombre != null && !nombre.isEmpty()) && (banda == null || banda.isEmpty())) {
+        if ((nombre != null && !nombre.isEmpty()) && (discografica == null || discografica.isEmpty())) {
             log.info("Buscando albumes por nombre: " + nombre);
-            return albumMapper.toAlbumResponseDto(albumRepository.findAllByNombre(nombre));
+            return albumMapper.toAlbumResponseDto(albumRepository.findByNombre(nombre));
         }
 
         if (nombre == null || nombre.isEmpty()) {
-            log.info("Buscando albumes por banda: " + banda);
-            return albumMapper.toAlbumResponseDto(albumRepository.findAllByBanda(banda));
+            log.info("Buscando albumes por discografica: " + discografica);
+            return albumMapper.toAlbumResponseDto(albumRepository.findByDiscograficaContainsIgnoreCase(discografica));
         }
 
-        log.info("Buscando albumes por nombre: " + nombre + " y banda: " + banda);
-        return albumMapper.toAlbumResponseDto(albumRepository.findAllByNombreAndBanda(nombre, banda));
+        log.info("Buscando albumes por nombre: " + nombre + " y discografica: " + discografica);
+        return albumMapper.toAlbumResponseDto(albumRepository.findByNombreAndDiscograficaContainingIgnoreCase(nombre, discografica));
     }
+
+
 
     @Cacheable(key = "#id")
     @Override
@@ -84,9 +83,8 @@ public class AlbumesServicesImpl implements AlbumesService{
     @Override
     public AlbumResponseDto save(AlbumCreateDto albumCreateDto) {
         log.info("Guardando tarjeta: " + albumCreateDto);
-        Long id = albumRepository.nextId();
 
-        Album nuevoAlbum = albumMapper.toAlbum(id, albumCreateDto);
+        Album nuevoAlbum = albumMapper.toAlbum(albumCreateDto);
 
         return albumMapper.toAlbumResponseDto(albumRepository.save(nuevoAlbum));
     }

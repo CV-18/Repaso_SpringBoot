@@ -8,7 +8,7 @@ import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
 import java.util.List;
 
 public interface AlbumesService {
-    List<AlbumResponseDto> findAll(String nombre, String banda);
+    List<AlbumResponseDto> findAll(String nombre, String discografica);
 
     AlbumResponseDto findById(Long id);
 

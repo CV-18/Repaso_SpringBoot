@@ -21,8 +21,20 @@ class AlbumRepositoryImplTest {
             .genero("Black Metal")
             .precio(15.90)
             .createdAt(LocalDateTime.now())
-            .updateAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
             .uuid(UUID.fromString("696969bc2-0c1c-494e-hhaf-e952a778e478"))
+            .build();
+
+    private final Album album2 = Album.builder()
+            .id(2l)
+            .nombre("Bergtatt")
+            .anio(1994)
+            .banda("Ulver")
+            .genero("Black Metal")
+            .precio(14.90)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .uuid(UUID.fromString("696969bc2-0c1c-494e-u9af-e952a778e478"))
             .build();
 
 
@@ -30,6 +42,7 @@ class AlbumRepositoryImplTest {
     void setUp() {
         repository = new AlbumRepositoryImpl();
         repository.save(album1);
+        repository.save(album2);
     }
 
     private AlbumRepositoryImpl repository;
@@ -70,8 +83,8 @@ class AlbumRepositoryImplTest {
 
     @Test
     void findAllByNombreAndBanda() {
-        String nombre = "The End";
-        String banda = "Ad Hominem";
+        String nombre = "Bergtatt";
+        String banda = "Ulver";
         List<Album> albums = repository.findAllByNombreAndBanda(nombre, banda);
 
         assertAll("findAllByNombreAndBanda",
@@ -84,7 +97,7 @@ class AlbumRepositoryImplTest {
 
     @Test
     void findById_existingID() {
-        Long id = 1l;
+        Long id = 2l;
         Optional<Album> optionalAlbum = repository.findById(id);
 
         assertAll("findById_existingID",
@@ -148,7 +161,7 @@ class AlbumRepositoryImplTest {
 
     @Test
     void existsByUuid() {
-        UUID uuid = UUID.fromString("696969bc2-0c1c-494e-hhaf-e952a778e478");
+        UUID uuid = UUID.fromString("696969bc2-0c1c-494e-u9af-e952a778e478");
         boolean exists = repository.existsByUuid(uuid);
 
         assertTrue(exists);
@@ -164,7 +177,7 @@ class AlbumRepositoryImplTest {
 
     @Test
     void save() {
-        Album album = Album.builder();
+        Album album ;
     }
 
     @Test
@@ -199,7 +212,7 @@ class AlbumRepositoryImplTest {
         var all =  repository.findAll();
 
         assertAll("nextId",
-                () -> assertEquals(2l,nextID),
+                () -> assertEquals(3l,nextID),
                 () -> assertEquals(2,all.size())
         );
     }

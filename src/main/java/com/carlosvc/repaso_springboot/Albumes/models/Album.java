@@ -1,10 +1,12 @@
 package com.carlosvc.repaso_springboot.Albumes.models;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Builder
 @Data
 public class Album {
     private final Long id;

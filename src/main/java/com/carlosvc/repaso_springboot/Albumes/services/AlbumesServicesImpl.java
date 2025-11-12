@@ -56,6 +56,15 @@ public class AlbumesServicesImpl implements AlbumesService{
         return albumMapper.toAlbumResponseDto(albumRepository.findAllByNombreAndBanda(nombre, banda));
     }
 
+    @Cacheable(key = "#genero")
+    @Override
+    public AlbumResponseDto findByGenero(String genero) {
+        log.info("Buscando tarjetas por genero={}", genero);
+        return albumMapper.toAlbumResponseDto(albumRepository.findByGenero(genero)
+                .orElseThrow(() -> new AlbumNotFoundExcepcion("Album no encontrado")));
+
+    }
+
     @Cacheable(key = "#id")
     @Override
     public AlbumResponseDto findById(Long id) {

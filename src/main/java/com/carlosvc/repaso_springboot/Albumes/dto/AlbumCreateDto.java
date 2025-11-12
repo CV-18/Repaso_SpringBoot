@@ -1,8 +1,10 @@
 package com.carlosvc.repaso_springboot.Albumes.dto;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class AlbumCreateDto {
     @NotBlank(message = "El nombre no puede estar vacío")

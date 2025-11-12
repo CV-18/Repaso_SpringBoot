@@ -1,8 +1,10 @@
 package com.carlosvc.repaso_springboot.Albumes.dto;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class AlbumUpdateDto {
     @NotBlank(message = "El nombre no puede estar vacío")
@@ -25,4 +27,10 @@ public class AlbumUpdateDto {
     @DecimalMin(value = "0.0", inclusive = false, message = "El precio debe ser mayor que cero")
     @DecimalMax(value = "9999.99", message = "El precio no puede exceder 9999.99")
     private final Double precio;
+
+    @NotBlank
+    @Size(max = 50, message = "La discografica no puede exceder los 50 caracteres")
+    private final String discografica;
 }
+
+

@@ -1,21 +1,56 @@
 package com.carlosvc.repaso_springboot.Albumes.models;
 
-import lombok.Data;
-
+import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
+import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Builder
+@ToString
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "ALBUMES")
 public class Album {
-    private final Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final String nombre;
-    private final Integer anio;
-    private final String banda;
-    private final String genero;
-    private final Double precio;
+    @Column(nullable = false, length = 50)
+    private String nombre;
 
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
-    private final UUID uuid;
+    @Column(nullable = false, length = 4)
+    private Integer anio;
+
+    @Column(nullable = false, length = 20)
+    private String banda;
+
+    @Column(nullable = false, length = 20)
+    private String genero;
+
+    @Column(nullable = false)
+    private Double precio;
+
+    @Builder.Default
+    @Column(updatable = false, nullable = false,columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Builder.Default
+    @Column(updatable = false, nullable = false,columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @Column(unique = true, updatable =false, nullable = false)
+    @Builder.Default
+    private UUID uuid = UUID.randomUUID();
+
+    @Column(columnDefinition = "boolean default false")
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    @ManyToOne
+    @JoinColumn(name = "discografica_id")
+    private Discografica discografica;
 }

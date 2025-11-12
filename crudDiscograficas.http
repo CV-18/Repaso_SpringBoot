@@ -1,0 +1,35 @@
+###getDiscograficas
+GET http://localhost:3000/api/v1/Discograficas
+
+###getDiscograficas
+GET http://localhost:3000/api/v1/Discograficas/1
+
+###getDiscograficasBanda
+GET http://localhost:3000/api/v1/Discograficas?banda=Dissection
+
+###getDiscograficas No existente
+GET http://localhost:3000/api/v1/Discograficas/4
+
+###nuevoAlbum
+POST http://localhost:3000/api/v1/Discograficas
+Content-Type: application/json
+
+{
+  "nombre": "Totenlider",
+  "isDeleted": false
+}
+
+
+
+###actualizar
+PUT http://localhost:3000/api/v1/Discograficas
+Content-Type: application/json
+
+{
+  "nombre": "Burzum",
+  "anio": "2006",
+  "banda": "Burzum",
+  "genero": "Black Metal",
+  "precio": 16.80
+}
+

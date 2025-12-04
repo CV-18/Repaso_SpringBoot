@@ -6,7 +6,6 @@ import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
 import com.carlosvc.repaso_springboot.Albumes.excepcions.AlbumNotFoundExcepcion;
 import com.carlosvc.repaso_springboot.Albumes.services.AlbumesService;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,21 +60,20 @@ class AlbumesRestControllerTest {
 
         assertThat(resultado)
                 .hasStatusOk()
-                .bodyJson().satisfies(json ->{
-                    assertThat(json).extractingPath("$.lenght()").isEqualTo(albumResponses.size());
+                .bodyJson().satisfies(json -> {
+                    // CORREGIDO: lenght() -> length()
+                    assertThat(json).extractingPath("$.length()").isEqualTo(albumResponses.size());
                     assertThat(json).extractingPath("$[0]")
                             .convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto1);
                     assertThat(json).extractingPath("$[1]")
                             .convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto2);
 
                 });
-        verify(albumesService,times(1)).findAll(null, null);
-
+        verify(albumesService, times(1)).findAll(null, null);
     }
 
-
     @Test
-    void getAllByNombre(){
+    void getAllByNombre() {
         var albumResponseDto = List.of(albumResponseDto2);
         String queryString = "?nombre=" + albumResponseDto2.getNombre();
         when(albumesService.findAll(anyString(), isNull())).thenReturn(albumResponseDto);
@@ -86,19 +84,19 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-            .hasStatusOk()
-            .bodyJson().satisfies(json ->{
-                assertThat(json).extractingPath("$.lenght").isEqualTo(albumResponseDto.size());
-                assertThat(json).extractingPath("$[0]")
-                        .convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto2);
+                .hasStatusOk()
+                .bodyJson().satisfies(json -> {
+                    // CORREGIDO: lenght -> length()
+                    assertThat(json).extractingPath("$.length()").isEqualTo(albumResponseDto.size());
+                    assertThat(json).extractingPath("$[0]")
+                            .convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto2);
 
-            });
-        verify(albumesService,only()).findAll(isNull(),anyString());
-
+                });
+        verify(albumesService, only()).findAll(isNull(), anyString());
     }
 
     @Test
-    void getAllByBanda(){
+    void getAllByBanda() {
         var albumResponseDto = List.of(albumResponseDto2);
         String queryString = "?banda=" + albumResponseDto2.getBanda();
         when(albumesService.findAll(isNull(), anyString())).thenReturn(albumResponseDto);
@@ -110,20 +108,21 @@ class AlbumesRestControllerTest {
 
         assertThat(resultado)
                 .hasStatusOk()
-                .bodyJson().satisfies(json ->{
-                    assertThat(json).extractingPath("$.lenght()").isEqualTo(albumResponseDto.size());
+                .bodyJson().satisfies(json -> {
+                    // CORREGIDO: lenght() -> length()
+                    assertThat(json).extractingPath("$.length()").isEqualTo(albumResponseDto.size());
                     assertThat(json).extractingPath("$[0]")
                             .convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto2);
 
                 });
 
-        verify(albumesService,only()).findAll(isNull(), anyString());
+        verify(albumesService, only()).findAll(isNull(), anyString());
     }
 
     @Test
-    void getAllByNombreAndBanda(){
+    void getAllByNombreAndBanda() {
         var albumResponseDto = List.of(albumResponseDto2);
-        String queryString =  "?nombre=" + albumResponseDto2.getNombre() + "&" + "banda=" + albumResponseDto2.getBanda();
+        String queryString = "?nombre=" + albumResponseDto2.getNombre() + "&" + "banda=" + albumResponseDto2.getBanda();
         when(albumesService.findAll(anyString(), anyString())).thenReturn(albumResponseDto);
 
         var resultado = mockMvcTester.get()
@@ -133,15 +132,16 @@ class AlbumesRestControllerTest {
 
 
         assertThat(resultado)
-        .hasStatusOk()
-                .bodyJson().satisfies(json ->{
-                    assertThat(json).extractingPath("$.lenght()").isEqualTo(albumResponseDto.size());
+                .hasStatusOk()
+                .bodyJson().satisfies(json -> {
+                    // CORREGIDO: lenght() -> length()
+                    assertThat(json).extractingPath("$.length()").isEqualTo(albumResponseDto.size());
                     assertThat(json).extractingPath("$[0]")
                             .convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto2);
 
                 });
 
-        verify(albumesService,only()).findAll(anyString(), anyString());
+        verify(albumesService, only()).findAll(anyString(), anyString());
     }
 
     @Test
@@ -155,12 +155,12 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-        .hasStatusOk()
+                .hasStatusOk()
                 .bodyJson()
                 .convertTo(AlbumResponseDto.class)
                 .isEqualTo(albumResponseDto1);
 
-        verify(albumesService,only()).findById(anyLong());
+        verify(albumesService, only()).findById(anyLong());
     }
 
     @Test
@@ -177,10 +177,9 @@ class AlbumesRestControllerTest {
                 .hasStatus4xxClientError()
                 .hasFailed().failure()
                 .isInstanceOf(AlbumNotFoundExcepcion.class)
-                .hasMessageContaining("no entrada");
+                .hasMessageContaining("no encontrado"); // Ajustado mensaje esperado
 
-        verify(albumesService,only()).findById(anyLong());
-
+        verify(albumesService, only()).findById(anyLong());
     }
 
     @Test
@@ -191,7 +190,8 @@ class AlbumesRestControllerTest {
                     "anio": 1994,
                     "banda": "Rotting Christ",
                     "genero": "Black Metal",
-                    "precio": 17.80
+                    "precio": 17.80,
+                    "discografica": "Test Records"
                 }
                 """;
 
@@ -213,13 +213,12 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-        .hasStatus(HttpStatus.CREATED)
+                .hasStatus(HttpStatus.CREATED)
                 .bodyJson()
                 .convertTo(AlbumResponseDto.class)
                 .isEqualTo(albumSaved);
 
-        verify(albumesService,only()).save(any(AlbumCreateDto.class));
-
+        verify(albumesService, only()).save(any(AlbumCreateDto.class));
     }
 
     @Test
@@ -241,23 +240,23 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-        .hasStatus(HttpStatus.BAD_REQUEST)
+                .hasStatus(HttpStatus.BAD_REQUEST)
                 .bodyJson()
-                .hasPathSatisfying("$.errores",path ->{
+                .hasPathSatisfying("$.errors", path -> { // Corregido "errores" a "errors" (ProblemDetail usa "errors" en tu controller)
                     assertThat(path).hasFieldOrProperty("nombre");
                     assertThat(path).hasFieldOrProperty("anio");
                 });
 
-        verify(albumesService,never()).save(any(AlbumCreateDto.class));
+        verify(albumesService, never()).save(any(AlbumCreateDto.class));
     }
 
 
     @Test
     void update() {
-        Long id = 2l;
+        Long id = 2L;
         String requestBody = """
                 {
-                    "precio": "5.00"
+                    "precio": 5.00
                 }
             """;
 
@@ -270,7 +269,7 @@ class AlbumesRestControllerTest {
                 .precio(5.00)
                 .build();
 
-        when(albumesService.update(anyLong(),any(AlbumUpdateDto.class))).thenReturn(albumSaved);
+        when(albumesService.update(anyLong(), any(AlbumUpdateDto.class))).thenReturn(albumSaved);
 
         var resultado = mockMvcTester.get()
                 .uri(ENDPOINT + "/" + id)
@@ -279,23 +278,24 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-        .hasStatus(HttpStatus.OK)
+                .hasStatus(HttpStatus.OK)
                 .bodyJson()
                 .convertTo(AlbumResponseDto.class)
                 .isEqualTo(albumSaved);
 
-        verify(albumesService,only()).update(anyLong(),any(AlbumUpdateDto.class));
+        verify(albumesService, only()).update(anyLong(), any(AlbumUpdateDto.class));
     }
 
     @Test
     void update_InvalidIdProvided() {
         Long id = 3L;
+        // CORREGIDO: JSON Malformado (Faltaba cerrar la llave)
         String requestBody = """
                 {
                     "precio": "5.00"
-                {
+                }
             """;
-        when(albumesService.update(anyLong(),any(AlbumUpdateDto.class))).thenThrow(new AlbumNotFoundExcepcion(id));
+        when(albumesService.update(anyLong(), any(AlbumUpdateDto.class))).thenThrow(new AlbumNotFoundExcepcion(id));
 
         var resultado = mockMvcTester.get()
                 .uri(ENDPOINT + "/" + id)
@@ -305,17 +305,17 @@ class AlbumesRestControllerTest {
 
 
         assertThat(resultado)
-        .hasStatus(HttpStatus.NOT_FOUND)
+                .hasStatus(HttpStatus.NOT_FOUND)
                 .hasFailed().failure()
                 .isInstanceOf(AlbumNotFoundExcepcion.class)
                 .hasMessageContaining("no encontrado");
 
-        verify(albumesService,only()).update(anyLong(),any());
+        verify(albumesService, only()).update(anyLong(), any());
     }
 
     @Test
     void updatePartial() {
-        Long id = 1l;
+        Long id = 1L;
         String requestBody = """
                 {
                     "genero": "Death Metal",
@@ -332,7 +332,7 @@ class AlbumesRestControllerTest {
                 .precio(20.80)
                 .build();
 
-        when(albumesService.update(anyLong(),any(AlbumUpdateDto.class))).thenReturn(albumSaved);
+        when(albumesService.update(anyLong(), any(AlbumUpdateDto.class))).thenReturn(albumSaved);
 
         var resultado = mockMvcTester.get()
                 .uri(ENDPOINT + "/" + id)
@@ -341,17 +341,17 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-        .hasStatus(HttpStatus.OK)
+                .hasStatus(HttpStatus.OK)
                 .bodyJson()
                 .convertTo(AlbumResponseDto.class)
                 .isEqualTo(albumSaved);
 
-        verify(albumesService,only()).update(anyLong(),any(AlbumUpdateDto.class));
+        verify(albumesService, only()).update(anyLong(), any(AlbumUpdateDto.class));
     }
 
     @Test
     void delete() {
-        Long id = 2l;
+        Long id = 2L;
         doNothing().when(albumesService).deleteById(anyLong());
 
         var resultado = mockMvcTester.get()
@@ -359,9 +359,9 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-        .hasStatus(HttpStatus.NO_CONTENT);
+                .hasStatus(HttpStatus.NO_CONTENT);
 
-        verify(albumesService,only()).deleteById(anyLong());
+        verify(albumesService, only()).deleteById(anyLong());
     }
 
     @Test
@@ -374,12 +374,11 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-        .hasStatus(HttpStatus.NOT_FOUND)
+                .hasStatus(HttpStatus.NOT_FOUND)
                 .hasFailed().failure()
                 .isInstanceOf(AlbumNotFoundExcepcion.class)
                 .hasMessageContaining("no encontrado");
 
-        verify(albumesService,only()).deleteById(anyLong());
+        verify(albumesService, only()).deleteById(anyLong());
     }
-
 }

@@ -14,17 +14,13 @@ import java.util.UUID;
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
     List<Album> findByNombre(String nombre);
-    //List<Album> findByNombreAndIsDeletedFalse(String nombre);
 
-    @Query("SELECT al FROM Album al WHERE LOWER(al.discografica.nombre) like %:dicografica% ")
+    // CORREGIDO: Cambiado :dicografica por :discografica
+    @Query("SELECT al FROM Album al WHERE LOWER(al.discografica.nombre) like %:discografica% ")
     List<Album> findByDiscograficaContainsIgnoreCase(String discografica);
-    //List<Album> findByDiscograficaContainsIgnoreCaseAndIsDeletedFalse(String discografica);
 
     @Query("SELECT al FROM  Album al WHERE al.nombre =:nombre AND LOWER(al.discografica.nombre) like %:discografica%")
     List<Album> findByNombreAndDiscograficaContainsIgnoreCase(String nombre, String discografica);
-    //List<Album> findByNombreAndDiscograficaContainsIgnoreCaseAndIsDeletedFalse(String nombre, String discografica);
-
-
 
     Optional<Album> findByUuid(UUID uuid);
     boolean existsByUuid(UUID uuid);

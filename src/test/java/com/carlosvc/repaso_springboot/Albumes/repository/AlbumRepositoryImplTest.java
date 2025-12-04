@@ -2,7 +2,6 @@ package com.carlosvc.repaso_springboot.Albumes.repository;
 
 import com.carlosvc.repaso_springboot.Albumes.models.Album;
 import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
-import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +15,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-@Sql(value = {"/reset.sql"},executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@DataJpaTest
 
-class AlbumRepositoryTest {
+// Reseteamos la base de datos para partir de una situación conocida
+@Sql(value = {"/reset.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+// Vamos a probar el repositorio, pero moqueamos la base de datos JPA
+@DataJpaTest
+class AlbumRepositoryImplTest {
 
     private final Discografica discografica1 = Discografica.builder().nombre("Black Light").build();
     private final Discografica discografica2 = Discografica.builder().nombre("The Reaper").build();
 
-
     private final Album album1 = Album.builder()
-            .id(1l)
             .nombre("The End")
             .anio(1993)
             .banda("Ad Hominem")
@@ -39,7 +38,6 @@ class AlbumRepositoryTest {
             .build();
 
     private final Album album2 = Album.builder()
-            .id(2l)
             .nombre("Bergtatt")
             .anio(1994)
             .banda("Ulver")
@@ -52,15 +50,16 @@ class AlbumRepositoryTest {
             .build();
 
     @Autowired
-    private AlbumRepository repository;
+    private AlbumRepository repositorio;
     @Autowired
-    private TestEntityManager entityManager;
+    private TestEntityManager entityManager; // EntityManager para hacer las pruebas
 
     @BeforeEach
     void setUp() {
+        // Vamos a salvar las discográficas primero
         entityManager.persist(discografica1);
         entityManager.persist(discografica2);
-
+        // Vamos a salvar dos álbumes
         entityManager.persist(album1);
         entityManager.persist(album2);
         entityManager.flush();
@@ -68,204 +67,235 @@ class AlbumRepositoryTest {
 
     @Test
     void findAll() {
-        List<Album> albums = repository.findAll();
+        // Act
+        List<Album> albumes = repositorio.findAll();
 
+        // Assert
         assertAll("findAll",
-                ()-> assertNotNull(albums),
-                ()-> assertEquals(2, albums.size())
+                () -> assertNotNull(albumes),
+                () -> assertEquals(2, albumes.size())
         );
     }
 
     @Test
     void findAllByNombre() {
+        // Act
         String nombre = "The End";
-        List<Album> albums = repository.findByNombre(nombre);
+        List<Album> albumes = repositorio.findByNombre(nombre);
 
+        // Assert
         assertAll("findAllByNombre",
-                () -> assertNotNull(albums),
-                ()-> assertEquals(1, albums.size()),
-                () -> assertEquals(nombre, albums.getFirst().getNombre())
+                () -> assertNotNull(albumes),
+                () -> assertEquals(1, albumes.size()),
+                () -> assertEquals(nombre, albumes.getFirst().getNombre())
         );
     }
 
     @Test
     void findAllByDiscografica() {
-        String discografica = "Black Light";
-        List<Album> albums = repository.findByDiscograficaContainsIgnoreCase(discografica.toLowerCase());
+        // Act
+        String discograficaNombre = "Black Light";
+        // Nota: usamos toLowerCase() porque tu query JPQL usa LOWER()
+        List<Album> albumes = repositorio.findByDiscograficaContainsIgnoreCase(discograficaNombre.toLowerCase());
 
+        // Assert
         assertAll("findAllByDiscografica",
-                () -> assertNotNull(albums),
-                () -> assertEquals(1, albums.size()),
-                () -> assertEquals(discografica, albums.getFirst().getDiscografica().getNombre())
+                () -> assertNotNull(albumes),
+                () -> assertEquals(1, albumes.size()),
+                () -> assertEquals(discograficaNombre, albumes.getFirst().getDiscografica().getNombre())
         );
-
     }
 
     @Test
     void findAllByNombreAndDiscografica() {
+        // Act
         String nombre = "Bergtatt";
-        String discografica = "The Reaper";
-        List<Album> albums = repository.findByNombreAndDiscograficaContainsIgnoreCase(nombre, discografica);
+        String discograficaNombre = "The Reaper";
+        // Nota: usamos toLowerCase() en la discográfica porque tu query JPQL usa LOWER()
+        List<Album> albumes = repositorio.findByNombreAndDiscograficaContainsIgnoreCase(nombre, discograficaNombre.toLowerCase());
 
-        assertAll("findAllByNombreAndBanda",
-                () -> assertNotNull(albums),
-                () -> assertEquals(1,albums.size()),
-                () -> assertEquals(nombre, albums.getFirst().getNombre()),
-                () -> assertEquals(discografica, albums.getFirst().getDiscografica().getNombre())
+        // Assert
+        assertAll("findAllByNombreAndDiscografica",
+                () -> assertNotNull(albumes),
+                () -> assertEquals(1, albumes.size()),
+                () -> assertEquals(nombre, albumes.getFirst().getNombre()),
+                () -> assertEquals(discograficaNombre, albumes.getFirst().getDiscografica().getNombre())
         );
     }
 
     @Test
-    void findById_existingID_returnsOptionalWithAlbum() {
-        Long id = 1L;
-        Optional<Album> optionalAlbum = repository.findById(id);
+    void findById_existingId_returnsOptionalWithAlbum() {
+        // Act
+        Long id = album1.getId(); // Usamos el ID generado tras persistir
+        Optional<Album> optionalAlbum = repositorio.findById(id);
 
-        assertAll("findById_existingID_returnsOptionalWithAlbum",
+        // Assert
+        assertAll("findById_existingId_returnsOptionalWithAlbum",
                 () -> assertNotNull(optionalAlbum),
                 () -> assertTrue(optionalAlbum.isPresent()),
                 () -> assertEquals(id, optionalAlbum.get().getId())
         );
-
     }
 
     @Test
     void findById_nonExistingId_returnsEmptyOptional() {
-        Long id = 5L;
-        Optional<Album> optionalAlbum = repository.findById(id);
+        // Act
+        Long id = 99L;
+        Optional<Album> optionalAlbum = repositorio.findById(id);
 
+        // Assert
         assertAll("findById_nonExistingId_returnsEmptyOptional",
                 () -> assertNotNull(optionalAlbum),
                 () -> assertTrue(optionalAlbum.isEmpty())
         );
-
     }
 
     @Test
-    void findByUuid_existingUuid() {
+    void findByUuid_existingUuid_returnsOptionalWithAlbum() {
+        // Act
         UUID uuid = UUID.fromString("57727bc2-0c1c-494e-bbaf-e952a778e478");
-        Optional<Album> optionalAlbum = repository.findByUuid(uuid);
+        Optional<Album> optionalAlbum = repositorio.findByUuid(uuid);
 
-        assertAll("findByUuid_existingUuid",
-                () ->assertNotNull(optionalAlbum),
+        // Assert
+        assertAll("findByUuid_existingUuid_returnsOptionalWithAlbum",
+                () -> assertNotNull(optionalAlbum),
                 () -> assertTrue(optionalAlbum.isPresent()),
-                () ->assertEquals(uuid, optionalAlbum.get().getUuid())
+                () -> assertEquals(uuid, optionalAlbum.get().getUuid())
         );
     }
 
     @Test
-    void findByUuid_NotexistingUuid() {
-        UUID uuid = UUID.fromString("b36835eb-e56a-4023-b058-52bfa600fee7");
-        Optional<Album> optionalAlbum = repository.findByUuid(uuid);
+    void findByUuid_nonExistingUuid_returnsEmptyOptional() {
+        // Act
+        UUID uuid = UUID.fromString("12345bc2-0c1c-494e-bbaf-e952a778e478");
+        Optional<Album> optionalAlbum = repositorio.findByUuid(uuid);
 
-        assertAll("findByUuid_existingUuid",
-                () ->assertNotNull(optionalAlbum),
+        // Assert
+        assertAll("findByUuid_nonExistingUuid_returnsEmptyOptional",
+                () -> assertNotNull(optionalAlbum),
                 () -> assertTrue(optionalAlbum.isEmpty())
         );
     }
 
     @Test
-    void existsById() {
-        Long id = 1l;
-        boolean exists = repository.existsById(id);
+    void existsById_existingId_returnsTrue() {
+        // Act
+        Long id = album1.getId();
+        boolean exists = repositorio.existsById(id);
 
+        // Assert
         assertTrue(exists);
     }
 
     @Test
-    void existsById_NotexistingID() {
-        Long id = 5l;
-        boolean exists = repository.existsById(id);
+    void existsById_nonExistingId_returnsFalse() {
+        // Act
+        Long id = 99L;
+        boolean exists = repositorio.existsById(id);
 
+        // Assert
         assertFalse(exists);
     }
 
     @Test
-    void existsByUuid() {
-        UUID uuid = UUID.fromString("b36835eb-e56a-4023-b058-52bfa600fee5");
-        boolean exists = repository.existsByUuid(uuid);
+    void existsByUuid_existingUuid_returnsTrue() {
+        // Act
+        UUID uuid = UUID.fromString("57727bc2-0c1c-494e-bbaf-e952a778e478");
+        boolean exists = repositorio.existsByUuid(uuid);
 
+        // Assert
         assertTrue(exists);
     }
 
     @Test
-    void existsByUuid_NotexistingUuid() {
-        UUID uuid = UUID.fromString("67807bc2-0c1c-494e-bbaf-e952a778e478");
-        boolean exist = repository.existsByUuid(uuid);
+    void existsByUuid_nonExistingUuid_returnsFalse() {
+        // Act
+        UUID uuid = UUID.fromString("12345bc2-0c1c-494e-bbaf-e952a778e478");
+        boolean exists = repositorio.existsByUuid(uuid);
 
-        assertFalse(exist);
+        // Assert
+        assertFalse(exists);
     }
 
     @Test
-    void save_notExist() {
+    void save_notExists() {
+        // Arrange
         Album album = Album.builder()
                 .nombre("Altar")
                 .anio(1989)
                 .banda("Morbid Angel")
                 .genero("Death Metal")
                 .precio(20.89)
+                .discografica(discografica1) // Reutilizamos una discográfica existente
                 .build();
 
-        Album savedAlbum = repository.save(album);
-        var all = repository.findAll();
+        // Act
+        Album savedAlbum = repositorio.save(album);
+        var all = repositorio.findAll();
 
+        // Assert
         assertAll("save",
                 () -> assertNotNull(savedAlbum),
-                () -> assertEquals(album, savedAlbum),
+                () -> assertEquals(album.getNombre(), savedAlbum.getNombre()),
                 () -> assertEquals(3, all.size())
         );
-
     }
 
     @Test
-    void save_ButExist() {
-        Long id = 1l;
+    void save_butExists() {
+        // Arrange
+        Long id = album1.getId();
         Album albumExistente = Album.builder()
                 .id(id)
                 .nombre("The End")
                 .anio(1993)
                 .banda("Ad Hominem")
                 .genero("Black Metal")
-                .precio(15.90)
+                .precio(30.00) // Cambiamos el precio
+                .discografica(discografica1)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .uuid(UUID.fromString("57727bc2-0c1c-494e-bbaf-e952a778e478"))
                 .build();
 
+        // Act
+        Album savedAlbum = repositorio.save(albumExistente);
+        var all = repositorio.findAll();
 
-
-        Album savedAlbum = repository.save(albumExistente);
-        var all = repository.findAll();
-
+        // Assert
         assertAll("save",
                 () -> assertNotNull(savedAlbum),
-                () -> assertTrue(repository.existsById(id)),
-                () -> assertTrue(all.size() >=2)
+                () -> assertEquals(30.00, savedAlbum.getPrecio()),
+                () -> assertTrue(repositorio.existsById(id)),
+                () -> assertEquals(2, all.size()) // El tamaño sigue siendo 2, no se creó uno nuevo
         );
     }
 
     @Test
-    void deleteById() {
-        Long id = 1l;
-        repository.deleteById(id);
-        var allAlbums = repository.findAll();
+    void deleteById_existingId() {
+        // Act
+        Long id = album1.getId();
+        repositorio.deleteById(id);
+        var all = repositorio.findAll();
 
-        assertAll("deleteById_existing",
-                () -> assertEquals(1, allAlbums.size()),
-                () -> assertFalse(repository.existsById(id))
+        // Assert
+        assertAll("deleteById_existingId",
+                () -> assertEquals(1, all.size()),
+                () -> assertFalse(repositorio.existsById(id))
         );
     }
 
     @Test
     void deleteByUuid_existingUuid() {
+        // Act
         UUID uuid = UUID.fromString("57727bc2-0c1c-494e-bbaf-e952a778e478");
-        repository.deleteByUuid(uuid);
-        var all = repository.findAll();
+        repositorio.deleteByUuid(uuid);
+        var all = repositorio.findAll();
 
+        // Assert
         assertAll("deleteByUuid_existingUuid",
-                () -> assertEquals(1,all.size()),
-                () ->assertFalse(repository.existsByUuid(uuid))
+                () -> assertEquals(1, all.size()),
+                () -> assertFalse(repositorio.existsByUuid(uuid))
         );
     }
-
-
 }

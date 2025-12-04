@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@CacheConfig(cacheNames = {"albums"})
+@CacheConfig(cacheNames = {"albumes"})
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -106,7 +106,7 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
         Album albumsaved = albumRepository.save(albumMapper.toAlbum(albumCreateDto, discografica));
         onChange(Notificacion.Tipo.CREATED, albumsaved);
 
-        return albumMapper.toAlbumResponseDto(albumRepository.save(albumsaved));
+        return albumMapper.toAlbumResponseDto(albumsaved);
     }
 
     @Cacheable(key = "#result.id")
@@ -115,17 +115,19 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
     public AlbumResponseDto update(Long id, AlbumUpdateDto albumUpdateDto) {
         log.info("Actualizando tarjeta por id: " + id);
         var albumActual = albumRepository.findById(id).orElseThrow(() -> new AlbumNotFoundExcepcion(id));
-        Album albumActualizado =  albumMapper.toAlbum(albumUpdateDto,albumActual);
-        return albumMapper.toAlbumResponseDto(albumRepository.save(albumActualizado));
+        Album albumUpdate = albumRepository.save(
+                albumMapper.toAlbum(albumUpdateDto, albumActual));
+        onChange(Notificacion.Tipo.UPDATE,  albumUpdate);
+        return albumMapper.toAlbumResponseDto(albumUpdate);
     }
 
     @Cacheable(key = "#id")
     @Override
     public void deleteById(Long id) {
         log.debug("Borrando tarjeta por id: " + id);
-        albumRepository.findById(id).orElseThrow(() -> new AlbumNotFoundExcepcion(id));
+        Album albumDeleted = albumRepository.findById(id).orElseThrow(() -> new AlbumNotFoundExcepcion(id));
         albumRepository.deleteById(id);
-
+        onChange(Notificacion.Tipo.DELETE,  albumDeleted);
     }
 
     void onChange(Notificacion.Tipo tipo, Album data) {

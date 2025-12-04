@@ -19,7 +19,8 @@ Content-Type: application/json
     "anio": 2005,
     "banda": "Absurd",
     "genero": "Black Metal",
-    "precio": 14.80
+    "precio": 14.80,
+  "discografica": "Black Light"
 }
 
 
@@ -35,4 +36,7 @@ Content-Type: application/json
   "genero": "Black Metal",
   "precio": 16.80
 }
+
+###borrar
+DELETE http://localhost:3000/api/v1/Albumes/3
 

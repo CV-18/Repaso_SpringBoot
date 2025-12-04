@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor // JPA necesita un constructor vacío
+@NoArgsConstructor
 @Entity
 @Table(name = "DISCOGRAFICAS")
 public class Discografica {

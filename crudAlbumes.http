@@ -37,6 +37,14 @@ Content-Type: application/json
   "precio": 16.80
 }
 
+###actualizar
+PATCH http://localhost:3000/api/v1/Albumes
+Content-Type: application/json
+
+{
+  "anio": "2006"
+}
+
 ###borrar
 DELETE http://localhost:3000/api/v1/Albumes/3
 

@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 class DiscograficasRepositoryTest {
     private final Discografica discografica = Discografica.builder().nombre("Altar").build();
+    private final Discografica discografica2 = Discografica.builder().nombre("Black Light").build();
 
     @Autowired
     private DiscograficasRepository repositorio;
@@ -26,6 +27,7 @@ class DiscograficasRepositoryTest {
     void setUp() {
         // Insertamos un titular antes de cada test
         entityManager.persist(discografica);
+        entityManager.persist(discografica2);
         // Sincroniza los cambios en los objetos del contexto de persistencia con la BD
         entityManager.flush();
     }
@@ -58,12 +60,12 @@ class DiscograficasRepositoryTest {
     @Test
     void findById() {
         // Act
-        Discografica discografica = repositorio.findById(1L).orElse(null);
+        Discografica discografica2 = repositorio.findById(2L).orElse(null);
 
         // Assert
         assertAll("findById",
-                () -> assertNotNull(discografica),
-                () -> assertEquals("Altar", discografica.getNombre())
+                () -> assertNotNull(discografica2),
+                () -> assertEquals("Black Light", discografica2.getNombre())
         );
     }
 

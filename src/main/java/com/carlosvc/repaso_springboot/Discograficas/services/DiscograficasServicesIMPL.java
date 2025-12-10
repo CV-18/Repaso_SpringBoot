@@ -71,7 +71,7 @@ public class DiscograficasServicesIMPL implements DiscograficasService {
                         throw new DiscograficaConfictExcepcion("Ya existe una discografica con el nombre: " + discograficaRequestDTO.getNombre());
                     }
 
-                } );
+                });
         return discograficasRepository.save(discograficaMapper.toDiscografica(discograficaRequestDTO, discograficaActual));
 
     }

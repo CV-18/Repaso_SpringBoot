@@ -4,9 +4,17 @@ import com.carlosvc.repaso_springboot.Albumes.dto.AlbumCreateDto;
 import com.carlosvc.repaso_springboot.Albumes.dto.AlbumResponseDto;
 import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
 import com.carlosvc.repaso_springboot.Albumes.services.AlbumesService;
+import com.carlosvc.repaso_springboot.utils.PageResponse;
+import com.carlosvc.repaso_springboot.utils.PaginationLinksUtils;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +22,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.naming.ldap.PagedResultsResponseControl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,13 +36,27 @@ import java.util.Map;
 @RequestMapping("api/${api.version}/Albumes")
 public class AlbumesRestController {
     private final AlbumesService albumesService;
+    private final PaginationLinksUtils paginationLinksUtils;
     
 
     @GetMapping
-    public ResponseEntity<List<AlbumResponseDto>> getAll(@RequestParam(required = false) String nombre,
-                                                         @RequestParam(required = false) String discografica) {
-        log.info("Buscando tarjetas por numero={}, discografica={}", nombre, discografica);
-        return ResponseEntity.ok(albumesService.findAll(nombre, discografica));
+    public ResponseEntity<PageResponse<AlbumResponseDto>> getAll(@RequestParam(required = false) Optional<String> nombre,
+                                                                 @RequestParam(required = false)Optional<String> discografica,
+                                                                 @RequestParam(required = false)Optional<Boolean> isDeleted,
+                                                                 @RequestParam(defaultValue = "0")int page,
+                                                                 @RequestParam(defaultValue = "10")int size,
+                                                                 @RequestParam(defaultValue = "id")String sortBy,
+                                                                 @RequestParam(defaultValue = "asc")String direction,
+                                                                 HttpServletRequest request, ServletResponse servletResponse){
+
+        log.info("Buscando tarjetas por numero= {}, discografica= {}, isDeleted= {}", nombre, discografica, isDeleted);
+        Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(request.getRequestURL().toString());
+        Page<AlbumResponseDto> pageResult = albumesService.findAll(nombre, discografica, isDeleted, pageable);
+        return ResponseEntity.ok()
+                .header("link", paginationLinksUtils.createLinkHeader(pageResult, uriBuilder))
+                .body(PageResponse.of(pageResult, sortBy,direction));
     }
 
 

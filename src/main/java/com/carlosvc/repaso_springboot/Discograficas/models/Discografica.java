@@ -20,12 +20,14 @@ public class Discografica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true, nullable = false,  length = 20)
     private String nombre;
 
     @Builder.Default
     @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Builder.Default
     private LocalDateTime updatedAt =  LocalDateTime.now();
@@ -34,8 +36,6 @@ public class Discografica {
     @Builder.Default
     private Boolean isDeleted = false;
 
-
-    // relación bidireccional de uno a muchos con Tarjeta
     @OneToMany(mappedBy = "discografica")
     @JsonIgnoreProperties("discografica")
     private List<Album> albumes;

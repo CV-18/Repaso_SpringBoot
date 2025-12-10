@@ -17,7 +17,6 @@ class AlbumMapperTest {
 
     @Test
     void toAlbum_create() {
-        Long id = 1L;
         AlbumCreateDto albumCreateDto = AlbumCreateDto.builder()
                 .nombre("The End")
                 .anio(2004)
@@ -32,7 +31,6 @@ class AlbumMapperTest {
         var resultado = albumMapper.toAlbum(albumCreateDto,discografica);
 
         assertAll(
-                () -> assertEquals(id, resultado.getId()),
                 () -> assertEquals(albumCreateDto.getNombre(), resultado.getNombre()),
                 () -> assertEquals(albumCreateDto.getAnio(), resultado.getAnio()),
                 () -> assertEquals(albumCreateDto.getBanda(), resultado.getBanda()),
@@ -85,6 +83,7 @@ class AlbumMapperTest {
                 .banda("Ad Hominem")
                 .genero("Black Metal")
                 .precio(15.90)
+                .discografica(discografica)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .uuid(UUID.randomUUID())

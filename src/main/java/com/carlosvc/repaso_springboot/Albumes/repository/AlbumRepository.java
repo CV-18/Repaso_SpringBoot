@@ -2,6 +2,7 @@ package com.carlosvc.repaso_springboot.Albumes.repository;
 
 import com.carlosvc.repaso_springboot.Albumes.models.Album;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,16 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface AlbumRepository extends JpaRepository<Album, Long> {
-
-    List<Album> findByNombre(String nombre);
-
-    // CORREGIDO: Cambiado :dicografica por :discografica
-    @Query("SELECT al FROM Album al WHERE LOWER(al.discografica.nombre) like %:discografica% ")
-    List<Album> findByDiscograficaContainsIgnoreCase(String discografica);
-
-    @Query("SELECT al FROM  Album al WHERE al.nombre =:nombre AND LOWER(al.discografica.nombre) like %:discografica%")
-    List<Album> findByNombreAndDiscograficaContainsIgnoreCase(String nombre, String discografica);
+public interface AlbumRepository extends JpaRepository<Album, Long>, JpaSpecificationExecutor<Album> {
 
     Optional<Album> findByUuid(UUID uuid);
     boolean existsByUuid(UUID uuid);

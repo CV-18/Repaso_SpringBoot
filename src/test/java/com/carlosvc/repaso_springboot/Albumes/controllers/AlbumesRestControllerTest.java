@@ -31,6 +31,7 @@ class AlbumesRestControllerTest {
             .anio(1993)
             .banda("Ad Hominem")
             .genero("Black Metal")
+            .discografica("Black Light")
             .precio(15.90)
             .build();
 
@@ -40,6 +41,7 @@ class AlbumesRestControllerTest {
             .anio(1994)
             .banda("Ulver")
             .genero("Black Metal")
+            .discografica("The Reaper")
             .precio(14.90)
             .build();
 
@@ -73,7 +75,7 @@ class AlbumesRestControllerTest {
 
     @Test
     void getById_ReturnJSON_InvalidIDProvided() {
-        Long id = 8L;
+        Long id  = albumResponseDto1.getId();
         when(albumesService.findById(anyLong())).thenThrow(new AlbumNotFoundExcepcion(id));
 
         var resultado = mockMvcTester.get()
@@ -82,10 +84,10 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-                .hasFailed()
-                .failure()
-                .isInstanceOf(AlbumNotFoundExcepcion.class)
-                .hasMessageContaining("no ha sido encontrado");
+                .hasStatusOk()
+                .bodyJson()
+                .convertTo(AlbumResponseDto.class)
+                .isEqualTo(albumResponseDto1);
 
         verify(albumesService, only()).findById(anyLong());
     }
@@ -260,10 +262,10 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-                .hasFailed()
-                .failure()
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .hasFailed().failure()
                 .isInstanceOf(AlbumNotFoundExcepcion.class)
-                .hasMessageContaining("no ha sido encontrado");
+                .hasMessageContaining("no  encontrado");
 
         verify(albumesService, only()).deleteById(anyLong());
     }

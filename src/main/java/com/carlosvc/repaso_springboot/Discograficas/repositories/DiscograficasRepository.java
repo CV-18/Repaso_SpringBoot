@@ -2,6 +2,7 @@ package com.carlosvc.repaso_springboot.Discograficas.repositories;
 
 import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -10,14 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DiscograficasRepository extends JpaRepository<Discografica, Long> {
+public interface DiscograficasRepository extends JpaRepository<Discografica, Long>, JpaSpecificationExecutor<Discografica> {
     Optional<Discografica> findByNombreEqualsIgnoreCase(String nombre);
 
-    Optional<Discografica> findByNombreEqualsIgnoreCaseAndIsDeletedFalse(String nombre);
-
     List<Discografica> findByNombreContainingIgnoreCase(String nombre);
-
-    List<Discografica> findByNombreContainingIgnoreCaseAndIsDeletedFalse(String nombre);
 
     List<Discografica> findByIsDeleted(Boolean isDeleted);
 

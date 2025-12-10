@@ -9,6 +9,7 @@ import com.carlosvc.repaso_springboot.Albumes.excepcions.AlbumNotFoundExcepcion;
 import com.carlosvc.repaso_springboot.Albumes.mappers.AlbumMapper;
 import com.carlosvc.repaso_springboot.Albumes.models.Album;
 import com.carlosvc.repaso_springboot.Albumes.repository.AlbumRepository;
+import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
 import com.carlosvc.repaso_springboot.Discograficas.services.DiscograficasService;
 import com.carlosvc.repaso_springboot.config.websockets.WebSocketConfig;
 import com.carlosvc.repaso_springboot.config.websockets.WebSocketHandler;
@@ -17,16 +18,21 @@ import com.carlosvc.repaso_springboot.websockets.notifications.mappers.AlbumNoti
 import com.carlosvc.repaso_springboot.websockets.notifications.models.Notificacion;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @CacheConfig(cacheNames = {"albumes"})
@@ -51,25 +57,35 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
     }
 
     @Override
-    public List<AlbumResponseDto> findAll(String nombre, String discografica) {
+    public Page<AlbumResponseDto> findAll(Optional<String> nombre, Optional<String> discografica, Optional<Boolean> isDeleted, Pageable pageable) {
 
-        if ((nombre == null || nombre.isEmpty()) && (discografica == null || discografica.isEmpty())) {
-            log.info("Buscando todos los albumes");
-            return albumMapper.toAlbumResponseDtoList(albumRepository.findAll());
-        }
+        log.info("Buscando albumes por nombre: {}, discografica: {}, isDeleted: {}", nombre, discografica, isDeleted);
+        Specification<Album> specNombreAlbum = ((root, query, criteriaBuilder) ->
+                nombre.map(n -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + n.toLowerCase() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))));
 
-        if ((nombre != null && !nombre.isEmpty()) && (discografica == null || discografica.isEmpty())) {
-            log.info("Buscando albumes por nombre: " + nombre);
-            return albumMapper.toAlbumResponseDtoList(albumRepository.findByNombre(nombre));
-        }
 
-        if (nombre == null || nombre.isEmpty()) {
-            log.info("Buscando albumes por discografica: " + discografica);
-            return albumMapper.toAlbumResponseDtoList(albumRepository.findByDiscograficaContainsIgnoreCase(discografica.toLowerCase()));
-        }
+        Specification<Album>  specDiscografica = (root, query, criteriaBuilder) ->
+                discografica.map(d -> {
+                    Join<Album, Discografica> discograficaJoin = root.join("discografica");
+                    return criteriaBuilder.like(criteriaBuilder.lower(discograficaJoin.get("discografica")), "%" + d.toLowerCase() + "%");
 
-        log.info("Buscando albumes por nombre: " + nombre + " y discografica: " + discografica);
-        return albumMapper.toAlbumResponseDtoList(albumRepository.findByNombreAndDiscograficaContainsIgnoreCase(nombre, discografica.toLowerCase()));
+                }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+
+
+        Specification<Album> specIsDeleted = (root, query, criteriaBuilder) ->
+                isDeleted.map(d -> criteriaBuilder.equal(root.get("isDeleted"), d))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+
+
+        Specification<Album> criterio = Specification.allOf(specNombreAlbum, specDiscografica,specIsDeleted);
+
+
+        return albumRepository.findAll(criterio,pageable)
+                .map(albumMapper::toAlbumResponseDto);
+
     }
 
 

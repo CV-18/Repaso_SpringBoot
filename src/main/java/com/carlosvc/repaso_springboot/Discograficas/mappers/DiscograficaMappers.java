@@ -19,7 +19,7 @@ public class DiscograficaMappers {
                 .id(discografica.getId())
                 .nombre(discoDTO.getNombre() != null ? discoDTO.getNombre() : discografica.getNombre())
                 .createdAt(discografica.getCreatedAt())
-                .updatedAt(discografica.getUpdatedAt())
+                //.updatedAt(discografica.getUpdatedAt())
                 .isDeleted(discoDTO.getIsDeleted() != null ? discoDTO.getIsDeleted() : discografica.getIsDeleted())
                 .build();
     }

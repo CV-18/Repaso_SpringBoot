@@ -12,9 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,13 +30,18 @@ public class DiscograficasServicesIMPL implements DiscograficasService {
     private final DiscograficaMappers discograficaMappers;
 
     @Override
-    public List<Discografica> findAll(String nombre){
-        log.info("Buscando discograficas");
-        if (nombre == null ||  nombre.isEmpty()) {
-            return discograficasRepository.findAll();
-        }else {
-            return discograficasRepository.findByNombreContainingIgnoreCase(nombre);
-        }
+    public Page<Discografica> findAll(Optional<String> nombre, Optional<Boolean>isDeleted, Pageable pageable){
+        log.info("Buscando discograficas por nombre: {}, isDeleted: {}", nombre, isDeleted);
+        Specification<Discografica> specNombre = ((root, query, criteriaBuilder) ->
+                nombre.map(n -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + n.toLowerCase() + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))));
+
+        Specification<Discografica> specIsDeleted = ((root, query, criteriaBuilder) ->
+                isDeleted.map(d-> criteriaBuilder.equal(root.get("isDeleted"), d))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))));
+
+
+        Specification<Discografica>
     }
 
     @Override
@@ -71,7 +80,7 @@ public class DiscograficasServicesIMPL implements DiscograficasService {
                         throw new DiscograficaConfictExcepcion("Ya existe una discografica con el nombre: " + discograficaRequestDTO.getNombre());
                     }
 
-                } );
+                });
         return discograficasRepository.save(discograficaMapper.toDiscografica(discograficaRequestDTO, discograficaActual));
 
     }

@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @CacheConfig(cacheNames = {"albumes"})
 @Slf4j
@@ -68,7 +70,7 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
         Specification<Album>  specDiscografica = (root, query, criteriaBuilder) ->
                 discografica.map(d -> {
                     Join<Album, Discografica> discograficaJoin = root.join("discografica");
-                    return criteriaBuilder.like(criteriaBuilder.lower(discograficaJoin.get("discografica")), "%" + d.toLowerCase() + "%");
+                    return criteriaBuilder.like(criteriaBuilder.lower(discograficaJoin.get("nombre")), "%" + d.toLowerCase() + "%");
 
                 }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
@@ -86,6 +88,15 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
         return albumRepository.findAll(criterio,pageable)
                 .map(albumMapper::toAlbumResponseDto);
 
+    }
+
+    @Override
+    @Cacheable(key = "#banda")
+    public List<AlbumResponseDto> findByBanda(String banda) {
+        log.info("Buscando album por banda: {}",banda);
+        return albumRepository.findByBandaContainsIgnoreCase(banda).stream()
+                .map(albumMapper::toAlbumResponseDto)
+                .collect(Collectors.toList());
     }
 
 
@@ -137,7 +148,7 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
         return albumMapper.toAlbumResponseDto(albumUpdate);
     }
 
-    @Cacheable(key = "#id")
+    @CacheEvict(key = "#id")
     @Override
     public void deleteById(Long id) {
         log.debug("Borrando tarjeta por id: " + id);
@@ -170,7 +181,7 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
                 }
             });
             senderThread.setName("WebSocketTarjeta-" + data.getId());
-            senderThread.setDaemon(true); // Para que no impida que la aplicación se cierre
+            senderThread.setDaemon(true);
             senderThread.start();
             log.info("Hilo de websocket iniciado: {}", data.getId());
         } catch (JsonProcessingException e) {

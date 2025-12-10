@@ -20,6 +20,8 @@ public interface AlbumRepository extends JpaRepository<Album, Long>, JpaSpecific
 
     List<Album> findByIsDeleted(Boolean isDeleted);
 
+
+    List<Album> findByBandaContainsIgnoreCase(String banda);
     @Modifying
     @Query("UPDATE Album a SET a.isDeleted =true WHERE a.id = :id")
     void updateIsDeletedToTrueById(Long id);

@@ -59,6 +59,12 @@ public class AlbumesRestController {
                 .body(PageResponse.of(pageResult, sortBy,direction));
     }
 
+    @GetMapping("/banda/{banda}")
+    public ResponseEntity<List<AlbumResponseDto>> getByBanda(@PathVariable String banda) {
+        log.info("Buscando albumes por banda={}", banda);
+        return ResponseEntity.ok(albumesService.findByBanda(banda));
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<AlbumResponseDto> getById(@PathVariable Long id) {

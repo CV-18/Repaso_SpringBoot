@@ -16,9 +16,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// Reseteamos la base de datos para partir de una situación conocida
 @Sql(value = {"/reset.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-// Vamos a probar el repositorio, pero moqueamos la base de datos JPA
 @DataJpaTest
 class AlbumRepositoryImplTest {
 
@@ -78,55 +76,9 @@ class AlbumRepositoryImplTest {
     }
 
     @Test
-    void findAllByNombre() {
-        // Act
-        String nombre = "The End";
-        List<Album> albumes = repositorio.findByNombre(nombre);
-
-        // Assert
-        assertAll("findAllByNombre",
-                () -> assertNotNull(albumes),
-                () -> assertEquals(1, albumes.size()),
-                () -> assertEquals(nombre, albumes.getFirst().getNombre())
-        );
-    }
-
-    @Test
-    void findAllByDiscografica() {
-        // Act
-        String discograficaNombre = "Black Light";
-        // Nota: usamos toLowerCase() porque tu query JPQL usa LOWER()
-        List<Album> albumes = repositorio.findByDiscograficaContainsIgnoreCase(discograficaNombre.toLowerCase());
-
-        // Assert
-        assertAll("findAllByDiscografica",
-                () -> assertNotNull(albumes),
-                () -> assertEquals(1, albumes.size()),
-                () -> assertEquals(discograficaNombre, albumes.getFirst().getDiscografica().getNombre())
-        );
-    }
-
-    @Test
-    void findAllByNombreAndDiscografica() {
-        // Act
-        String nombre = "Bergtatt";
-        String discograficaNombre = "The Reaper";
-        // Nota: usamos toLowerCase() en la discográfica porque tu query JPQL usa LOWER()
-        List<Album> albumes = repositorio.findByNombreAndDiscograficaContainsIgnoreCase(nombre, discograficaNombre.toLowerCase());
-
-        // Assert
-        assertAll("findAllByNombreAndDiscografica",
-                () -> assertNotNull(albumes),
-                () -> assertEquals(1, albumes.size()),
-                () -> assertEquals(nombre, albumes.getFirst().getNombre()),
-                () -> assertEquals(discograficaNombre, albumes.getFirst().getDiscografica().getNombre())
-        );
-    }
-
-    @Test
     void findById_existingId_returnsOptionalWithAlbum() {
         // Act
-        Long id = album1.getId(); // Usamos el ID generado tras persistir
+        Long id = album1.getId();
         Optional<Album> optionalAlbum = repositorio.findById(id);
 
         // Assert

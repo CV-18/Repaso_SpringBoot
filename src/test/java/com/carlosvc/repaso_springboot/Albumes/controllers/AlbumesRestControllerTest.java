@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -16,6 +19,7 @@ import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -54,7 +58,9 @@ class AlbumesRestControllerTest {
     @Test
     void getAll() {
         var albumResponses = List.of(albumResponseDto1, albumResponseDto2);
-        when(albumesService.findAll(null, null)).thenReturn(albumResponses);
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(albumResponses);
+        when(albumesService.findAll(Optional.empty(), Optional.empty(),Optional.empty() ,pageable)).thenReturn(page);
 
         var resultado = mockMvcTester.get()
                 .uri(ENDPOINT)
@@ -64,18 +70,117 @@ class AlbumesRestControllerTest {
         assertThat(resultado)
                 .hasStatusOk()
                 .bodyJson().satisfies(json -> {
-                    assertThat(json).extractingPath("$.length()").isEqualTo(albumResponses.size());
-                    assertThat(json).extractingPath("$[0]").convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto1);
-                    assertThat(json).extractingPath("$[1]").convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto2);
+                    assertThat(json).extractingPath("$.content.length()").isEqualTo(albumResponses.size());
+                    assertThat(json).extractingPath("$.content[0]").convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto1);
+                    assertThat(json).extractingPath("$.content[1]").convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto2);
                 });
-        verify(albumesService, times(1)).findAll(null, null);
+        verify(albumesService, times(1)).findAll(Optional.empty(), Optional.empty(),Optional.empty() ,pageable);
     }
 
-    // ... (Mantén los tests de búsqueda getAllBy... que estaban bien)
+    @Test
+    void getAllByNombre() {
+        var albumResponses = List.of(albumResponseDto2);
+        String queryString = "?nombre=" + albumResponseDto2.getNombre();
+        Optional<String> nombre = Optional.of(albumResponseDto2.getNombre());
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(albumResponses);
+        when(albumesService.findAll(nombre, Optional.empty(), Optional.empty(), pageable))
+                .thenReturn(page);
+
+        var result = mockMvcTester.get()
+                .uri(ENDPOINT + queryString)
+                .contentType(MediaType.APPLICATION_JSON)
+                .exchange();
+
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson().satisfies(json -> {
+                    assertThat(json).extractingPath("$.content.length()").isEqualTo(albumResponses.size());
+                    assertThat(json).extractingPath("$.content[0]")
+                            .convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto2);
+                });
+
+        verify(albumesService, times(1))
+                .findAll(nombre, Optional.empty(), Optional.empty(), pageable);
+    }
+
+    @Test
+    void getAllByDiscografica() {
+        var albumResponses = List.of(albumResponseDto2);
+        String queryString = "?discografica=" + albumResponseDto2.getDiscografica();
+        Optional<String> discografica = Optional.of(albumResponseDto2.getDiscografica());
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(albumResponses);
+        when(albumesService.findAll(Optional.empty(), discografica, Optional.empty(), pageable))
+                .thenReturn(page);
+
+        var result = mockMvcTester.get()
+                .uri(ENDPOINT + queryString)
+                .contentType(MediaType.APPLICATION_JSON)
+                .exchange();
+
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson().satisfies(json -> {
+                    assertThat(json).extractingPath("$.content.length()").isEqualTo(albumResponses.size());
+                    assertThat(json).extractingPath("$.content[0]")
+                            .convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto2);
+                });
+
+        verify(albumesService, only())
+                .findAll(Optional.empty(), discografica, Optional.empty(), pageable);
+    }
+
+    @Test
+    void getAllByNombreAndDiscografica() {
+        var albumResponses = List.of(albumResponseDto2);
+        String queryString = "?nombre=" + albumResponseDto2.getNombre() + "&"
+                + "discografica=" + albumResponseDto2.getDiscografica();
+        Optional<String> nombre = Optional.of(albumResponseDto2.getNombre());
+        Optional<String> discografica = Optional.of(albumResponseDto2.getDiscografica());
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(albumResponses);
+        when(albumesService.findAll(nombre, discografica, Optional.empty(), pageable)).thenReturn(page);
+
+        var result = mockMvcTester.get()
+                .uri(ENDPOINT + queryString)
+                .contentType(MediaType.APPLICATION_JSON)
+                .exchange();
+
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson().satisfies(json -> {
+                    assertThat(json).extractingPath("$.content.length()").isEqualTo(albumResponses.size());
+                    assertThat(json).extractingPath("$.content[0]")
+                            .convertTo(AlbumResponseDto.class).isEqualTo(albumResponseDto2);
+                });
+
+        verify(albumesService, only()).findAll(nombre, discografica, Optional.empty(), pageable);
+    }
+
+    @Test
+    void getById_shouldReturnJsonWithTarjeta_whenValidIdProvided() {
+        Long id = albumResponseDto1.getId();
+        when(albumesService.findById(id)).thenReturn(albumResponseDto1);
+
+        var result = mockMvcTester.get()
+                .uri(ENDPOINT + "/" + id.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .exchange();
+
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .convertTo(AlbumResponseDto.class)
+                .isEqualTo(albumResponseDto1);
+
+        verify(albumesService, only()).findById(anyLong());
+
+    }
 
     @Test
     void getById_ReturnJSON_InvalidIDProvided() {
-        Long id  = albumResponseDto1.getId();
+        Long id  = 3L;
         when(albumesService.findById(anyLong())).thenThrow(new AlbumNotFoundExcepcion(id));
 
         var resultado = mockMvcTester.get()
@@ -84,10 +189,10 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-                .hasStatusOk()
-                .bodyJson()
-                .convertTo(AlbumResponseDto.class)
-                .isEqualTo(albumResponseDto1);
+                .hasStatus4xxClientError()
+                .hasFailed().failure()
+                .isInstanceOf(AlbumNotFoundExcepcion.class)
+                .hasMessageContaining("no encontrado");
 
         verify(albumesService, only()).findById(anyLong());
     }
@@ -116,7 +221,7 @@ class AlbumesRestControllerTest {
 
         when(albumesService.save(any(AlbumCreateDto.class))).thenReturn(albumSaved);
 
-        // CORREGIDO: .post()
+
         var resultado = mockMvcTester.post()
                 .uri(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -144,7 +249,7 @@ class AlbumesRestControllerTest {
                 }
                 """;
 
-        // CORREGIDO: .post()
+
         var resultado = mockMvcTester.post()
                 .uri(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -155,9 +260,8 @@ class AlbumesRestControllerTest {
                 .hasStatus(HttpStatus.BAD_REQUEST)
                 .bodyJson()
                 .hasPathSatisfying("$.errors", path -> {
-                    Map<String, String> errors = (Map<String, String>) path;
-                    assertThat(errors).containsKey("nombre");
-                    assertThat(errors).containsKey("anio");
+                    assertThat(path).hasFieldOrProperty("nombre");
+                    assertThat(path).hasFieldOrProperty("anio");
                 });
 
         verify(albumesService, never()).save(any(AlbumCreateDto.class));
@@ -206,7 +310,7 @@ class AlbumesRestControllerTest {
 
     @Test
     void update_InvalidIdProvided() {
-        Long id = 3L;
+        Long id = 4L;
         String requestBody = """
                 {
                     "nombre": "Bergtatt",
@@ -219,7 +323,6 @@ class AlbumesRestControllerTest {
             """;
         when(albumesService.update(anyLong(), any(AlbumUpdateDto.class))).thenThrow(new AlbumNotFoundExcepcion(id));
 
-        // CORREGIDO: .put()
         var resultado = mockMvcTester.put()
                 .uri(ENDPOINT + "/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -227,10 +330,10 @@ class AlbumesRestControllerTest {
                 .exchange();
 
         assertThat(resultado)
-                .hasFailed()
-                .failure()
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .hasFailed().failure()
                 .isInstanceOf(AlbumNotFoundExcepcion.class)
-                .hasMessageContaining("no ha sido encontrado");
+                .hasMessageContaining("no encontrado");
 
         verify(albumesService, only()).update(anyLong(), any());
     }
@@ -240,7 +343,6 @@ class AlbumesRestControllerTest {
         Long id = 2L;
         doNothing().when(albumesService).deleteById(anyLong());
 
-        // CORREGIDO: .delete()
         var resultado = mockMvcTester.delete()
                 .uri(ENDPOINT + "/" + id)
                 .exchange();
@@ -256,7 +358,7 @@ class AlbumesRestControllerTest {
         Long id = 3L;
         doThrow(new AlbumNotFoundExcepcion(id)).when(albumesService).deleteById(anyLong());
 
-        // CORREGIDO: .delete()
+
         var resultado = mockMvcTester.delete()
                 .uri(ENDPOINT + "/" + id)
                 .exchange();
@@ -265,7 +367,7 @@ class AlbumesRestControllerTest {
                 .hasStatus(HttpStatus.NOT_FOUND)
                 .hasFailed().failure()
                 .isInstanceOf(AlbumNotFoundExcepcion.class)
-                .hasMessageContaining("no  encontrado");
+                .hasMessageContaining("no encontrado");
 
         verify(albumesService, only()).deleteById(anyLong());
     }

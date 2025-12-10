@@ -14,13 +14,12 @@ public class DiscograficaMappers {
     }
 
 
-    public Discografica toDiscografica(DiscograficaRequestDTO discoDTO, Discografica discografica){
+    public Discografica toDiscografica(DiscograficaRequestDTO discograficaRequestDTO, Discografica discografica){
         return Discografica.builder()
                 .id(discografica.getId())
-                .nombre(discoDTO.getNombre() != null ? discoDTO.getNombre() : discografica.getNombre())
+                .nombre(discograficaRequestDTO.getNombre() != null ? discograficaRequestDTO.getNombre() : discografica.getNombre())
                 .createdAt(discografica.getCreatedAt())
-                //.updatedAt(discografica.getUpdatedAt())
-                .isDeleted(discoDTO.getIsDeleted() != null ? discoDTO.getIsDeleted() : discografica.getIsDeleted())
+                .isDeleted(discograficaRequestDTO.getIsDeleted() != null ? discograficaRequestDTO.getIsDeleted() : discografica.getIsDeleted())
                 .build();
     }
 }

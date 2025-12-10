@@ -4,11 +4,17 @@ import com.carlosvc.repaso_springboot.Discograficas.dto.DiscograficaRequestDTO;
 import com.carlosvc.repaso_springboot.Discograficas.excepcions.DiscograficaConfictExcepcion;
 import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
 import com.carlosvc.repaso_springboot.Discograficas.repositories.DiscograficasRepository;
+import com.carlosvc.repaso_springboot.Discograficas.mappers.DiscograficaMappers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,19 +30,24 @@ class DiscograficasServicesIMPLTest {
     @Mock
     private DiscograficasRepository discograficasRepository;
 
+    @Mock
+    private DiscograficaMappers discograficaMappers;
+
     @InjectMocks
     private DiscograficasServicesIMPL discograficasServicesIMPL;
 
     @Test
     void findAll() {
-        when(discograficasRepository.findAll()).thenReturn(List.of(discografica));
-        var res = discograficasServicesIMPL.findAll(null);
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(List.of(discografica));
+        when(discograficasRepository.findAll(any(Specification.class),any(Pageable.class))).thenReturn(page);
 
+        var res = discograficasServicesIMPL.findAll(Optional.empty(),Optional.empty(),pageable);
         assertAll("findAll",
                 () -> assertNotNull(res),
                 () -> assertFalse(res.isEmpty()));
 
-        verify(discograficasRepository, times(1)).findAll();
+        verify(discograficasRepository, times(1)).findAll(any(Specification.class),any(Pageable.class));
 
     }
 
@@ -60,14 +71,16 @@ class DiscograficasServicesIMPLTest {
 
         var res = discograficasServicesIMPL.findById(1L);
 
-        assertAll("findbyId",
+        assertAll("findById",
                 () -> assertNotNull(res),
                 ()-> assertEquals("Black Light", res.getNombre()));
+        verify(discograficasRepository, times(1)).findById(anyLong());
     }
 
     @Test
     void save() {
-        when(discograficasRepository.findByNombreEqualsIgnoreCase(anyString())).thenReturn(Optional.of(discografica));
+        when(discograficasRepository.findByNombreEqualsIgnoreCase(anyString())).thenReturn(Optional.empty());
+        when(discograficaMappers.toDiscografica(any(DiscograficaRequestDTO.class))).thenReturn(discografica);
         when(discograficasRepository.save(any(Discografica.class))).thenReturn(discografica);
 
         discograficasServicesIMPL.save(discograficaRequestDTO);
@@ -92,7 +105,7 @@ class DiscograficasServicesIMPLTest {
         // Assert
         assertAll("saveConflict",
                 () -> assertNotNull(res),
-                () -> assertEquals("Ya existe una discografica con el nombre Black Light", res.getMessage())
+                () -> assertEquals("Ya existe una discografica con el nombre: Black Light", res.getMessage())
         );
 
         // Verify
@@ -105,6 +118,7 @@ class DiscograficasServicesIMPLTest {
     void update() {
         when(discograficasRepository.findById(anyLong())).thenReturn(Optional.of(discografica));
         when(discograficasRepository.findByNombreEqualsIgnoreCase(anyString())).thenReturn(Optional.of(discografica));
+        when(discograficaMappers.toDiscografica(any(DiscograficaRequestDTO.class), any(Discografica.class))).thenReturn(discografica);
         when(discograficasRepository.save(any())).thenReturn(discografica);
 
         discograficasServicesIMPL.update(1L, discograficaRequestDTO);

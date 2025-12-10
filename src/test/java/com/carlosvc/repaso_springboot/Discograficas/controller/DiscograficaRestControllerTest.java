@@ -9,12 +9,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -41,7 +45,10 @@ class DiscograficaRestControllerTest {
     @Test
     void getAll() {
         var discograficas = List.of(discografica1, discografica2);
-        when(discograficasService.findAll(null)).thenReturn(discograficas);
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(discograficas);
+        when(discograficasService.findAll(Optional.empty(),Optional.empty(),pageable)).thenReturn(page);
+
 
         var result = mockMvcTester.get()
                 .uri(ENDPOINT)
@@ -51,13 +58,13 @@ class DiscograficaRestControllerTest {
         assertThat(result)
                 .hasStatusOk()
                 .bodyJson().satisfies(json -> {
-                    assertThat(json).extractingPath("$.lenght()").isEqualTo(discograficas.size());
-                    assertThat(json).extractingPath("$.[0]")
+                    assertThat(json).extractingPath("$.content.length()").isEqualTo(discograficas.size());
+                    assertThat(json).extractingPath("$.content[0]")
                             .convertTo(Discografica.class).usingRecursiveComparison().isEqualTo(discografica1);
-                    assertThat(json).extractingPath("$.[1]")
+                    assertThat(json).extractingPath("$.content[1]")
                             .convertTo(Discografica.class).usingRecursiveComparison().isEqualTo(discografica2);
                 });
-        verify(discograficasService,times(1)).findAll(null);
+        verify(discograficasService,times(1)).findAll(Optional.empty(),Optional.empty(),pageable);
 
     }
 
@@ -65,7 +72,10 @@ class DiscograficaRestControllerTest {
     void getAllByNombre(){
         var discograficas = List.of(discografica2);
         String queryString = "?nombre=" + discografica2.getNombre();
-        when(discograficasService.findAll(anyString())).thenReturn(discograficas);
+        Optional<String> nombre = Optional.of(discografica2.getNombre());
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(discograficas);
+        when(discograficasService.findAll(nombre,Optional.empty(),pageable)).thenReturn(page);
 
         var result = mockMvcTester.get()
                 .uri(ENDPOINT + queryString)
@@ -75,9 +85,9 @@ class DiscograficaRestControllerTest {
         assertThat(result)
         .hasStatusOk()
                 .bodyJson().satisfies(json -> {
-                    assertThat(json).extractingPath("$.lenght()").isEqualTo(discograficas.size());
-                    assertThat(json).extractingPath("$.[0]")
-                            .convertTo(Discografica.class).usingRecursiveComparison().isEqualTo(discografica1);
+                    assertThat(json).extractingPath("$.content.length()").isEqualTo(discograficas.size());
+                    assertThat(json).extractingPath("$.content[0]")
+                            .convertTo(Discografica.class).usingRecursiveComparison().isEqualTo(discografica2);
                 });
     }
 
@@ -122,6 +132,7 @@ class DiscograficaRestControllerTest {
         .hasStatus(HttpStatus.CREATED)
                 .bodyJson()
                 .convertTo(Discografica.class)
+                .usingRecursiveComparison()
                 .isEqualTo(discograficaSaved);
 
         verify(discograficasService, only()).save(any(DiscograficaRequestDTO.class));
@@ -129,25 +140,22 @@ class DiscograficaRestControllerTest {
 
     @Test
     void create_whenBadRequest() {
-        // Arrange
         String requestBody = """
            {
               "nombre": null
            }
            """;
 
-        // Act
         var result = mockMvcTester.post()
                 .uri(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .exchange();
 
-        // Assert
         assertThat(result)
                 .hasStatus(HttpStatus.BAD_REQUEST)
                 .bodyJson()
-                .hasPathSatisfying("$.errores", path ->
+                .hasPathSatisfying("$.errors", path ->
                         assertThat(path).hasFieldOrProperty("nombre"));
 
 
@@ -167,21 +175,17 @@ class DiscograficaRestControllerTest {
         when(discograficasService.save(any(DiscograficaRequestDTO.class)))
                 .thenThrow(new DiscograficaConfictExcepcion("Ya existe una discografica con el nombre Black Light"));
 
-
-        // Act
         var result = mockMvcTester.post()
                 .uri(ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .exchange();
 
-        // Assert
         assertThat(result)
                 .hasStatus(HttpStatus.CONFLICT)
-                // throws TitularesConflictEsception
                 .hasFailed().failure()
                 .isInstanceOf(DiscograficaConfictExcepcion.class)
-                .hasMessageContaining("Ya existe una Discografica");
+                .hasMessageContaining("Ya existe una discografica");
 
 
         verify(discograficasService, only()).save(any(DiscograficaRequestDTO.class));
@@ -189,7 +193,6 @@ class DiscograficaRestControllerTest {
 
     @Test
     void update() {
-        // Arrange
         Long id = 1L;
         String requestBody = """
            {
@@ -204,14 +207,12 @@ class DiscograficaRestControllerTest {
 
         when(discograficasService.update(anyLong(), any(DiscograficaRequestDTO.class))).thenReturn(discograficaSaved);
 
-        // Act
         var result = mockMvcTester.put()
                 .uri(ENDPOINT+ "/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .exchange();
 
-        // Assert
         assertThat(result)
                 .hasStatusOk()
                 .bodyJson()
@@ -223,17 +224,15 @@ class DiscograficaRestControllerTest {
     }
 
     @Test
-    void update_shouldThrowTitularNotFound() {
-        // Arrange
+    void update_shouldThrowDiscograficaNotFound() {
         Long id = 3L;
         String requestBody = """
            {
-              "nombre": "JOSE"
+              "nombre": "Templar"
            }
            """;
         when(discograficasService.update(anyLong(), any(DiscograficaRequestDTO.class))).thenThrow(new DiscograficaNotFoundExcepcion(id));
 
-        // Act
         var result = mockMvcTester.put()
                 .uri(ENDPOINT + "/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -242,18 +241,16 @@ class DiscograficaRestControllerTest {
 
         assertThat(result)
                 .hasStatus(HttpStatus.NOT_FOUND)
-                // throws TarjetaNotFoundException
                 .hasFailed().failure()
                 .isInstanceOf(DiscograficaNotFoundExcepcion.class)
-                .hasMessageContaining("no encontrado");
+                .hasMessageContaining("no ha sido encontrada");
 
-        // Verify
         verify(discograficasService, only()).update(anyLong(), any());
     }
 
     @Test
     void update_shouldThrowBadRequest() {
-        Long id = 3L;
+        long id = 3L;
         String requestBody = """
            {
               "nombre": null
@@ -269,7 +266,7 @@ class DiscograficaRestControllerTest {
         assertThat(result)
                 .hasStatus(HttpStatus.BAD_REQUEST)
                 .bodyJson()
-                .hasPathSatisfying("$.errores", path ->
+                .hasPathSatisfying("$.errors", path ->
                         assertThat(path).hasFieldOrProperty("nombre"));
 
 
@@ -328,7 +325,7 @@ class DiscograficaRestControllerTest {
                 .exchange();
 
         assertThat(result)
-                .hasStatus(HttpStatus.NOT_FOUND);
+        .hasStatus(HttpStatus.NOT_FOUND);
 
         verify(discograficasService, only()).deleteById(anyLong());
     }

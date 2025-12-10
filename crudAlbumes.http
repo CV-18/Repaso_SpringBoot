@@ -5,7 +5,7 @@ GET http://localhost:3000/api/v1/Albumes
 GET http://localhost:3000/api/v1/Albumes/1
 
 ###getAlbumesBanda
-GET http://localhost:3000/api/v1/Albumes?banda=Dissection
+GET http://localhost:3000/api/v1/Albumes/?banda=Ad%20Hominem
 
 ###getAlbumes No existente
 GET http://localhost:3000/api/v1/Albumes/4
@@ -48,3 +48,9 @@ Content-Type: application/json
 ###borrar
 DELETE http://localhost:3000/api/v1/Albumes/3
 
+### Paginación
+GET http://localhost:3000/api/v1/Albumes?sortBy=discografica&direction=desc
+###
+GET http://localhost:3000/api/v1/Albumes?sortBy=discografica&direction=desc&size=1
+###
+GET http://localhost:3000/api/v1/Albumes?sortBy=discografica&direction=desc&size=1&page=0

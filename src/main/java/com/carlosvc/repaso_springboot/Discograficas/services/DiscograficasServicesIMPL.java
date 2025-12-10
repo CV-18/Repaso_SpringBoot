@@ -9,15 +9,16 @@ import com.carlosvc.repaso_springboot.Discograficas.repositories.DiscograficasRe
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -25,9 +26,9 @@ import java.util.Optional;
 @Service
 @CacheConfig(cacheNames = {"discograficas"})
 public class DiscograficasServicesIMPL implements DiscograficasService {
-    public final DiscograficasRepository  discograficasRepository;
-    public final DiscograficaMappers discograficaMapper;
-    private final DiscograficaMappers discograficaMappers;
+    private final DiscograficasRepository discograficasRepository;
+    @Autowired
+    private final DiscograficaMappers discograficaMapper;
 
     @Override
     public Page<Discografica> findAll(Optional<String> nombre, Optional<Boolean>isDeleted, Pageable pageable){
@@ -41,7 +42,8 @@ public class DiscograficasServicesIMPL implements DiscograficasService {
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))));
 
 
-        Specification<Discografica>
+        Specification<Discografica> criterio = Specification.allOf(specNombre, specIsDeleted);
+        return discograficasRepository.findAll(criterio, pageable);
     }
 
     @Override
@@ -53,6 +55,7 @@ public class DiscograficasServicesIMPL implements DiscograficasService {
 
 
     @Override
+    @Cacheable(key = "#id")
     public Discografica findById(Long id){
         log.info("Buscando discograficas por id");
         return discograficasRepository.findById(id)
@@ -60,17 +63,17 @@ public class DiscograficasServicesIMPL implements DiscograficasService {
     }
 
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Discografica save (DiscograficaRequestDTO discograficaRequestDTO){
         log.info("Guardando discografica: {}", discograficaRequestDTO);
         discograficasRepository.findByNombreEqualsIgnoreCase(discograficaRequestDTO.getNombre()).ifPresent(disco ->{
             throw new DiscograficaConfictExcepcion("Ya existe una discografica con el nombre: " + discograficaRequestDTO.getNombre());
         });
-        return discograficasRepository.save(discograficaMappers.toDiscografica(discograficaRequestDTO));
+        return discograficasRepository.save(discograficaMapper.toDiscografica(discograficaRequestDTO));
     }
 
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Discografica update(Long id, DiscograficaRequestDTO discograficaRequestDTO){
         log.info("Actualizando discografica: {}", discograficaRequestDTO);
         Discografica discograficaActual = findById(id);
@@ -87,7 +90,7 @@ public class DiscograficasServicesIMPL implements DiscograficasService {
 
 
     @Override
-    @CacheEvict
+    @CacheEvict(key = "#id")
     @Transactional
     public void deleteById(Long id){
         log.info("Eliminando discografica: {}", id);

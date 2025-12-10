@@ -1,5 +1,5 @@
 INSERT INTO DISCOGRAFICAS(nombre)
-    values ('black light'),('the reaper');
+    values ('Black light'),('The Reaper');
 
 INSERT INTO ALBUMES(nombre,anio,banda, genero,precio,discografica_id,uuid)
     VALUES ('The End', '2004','Ad Hominem','Black Metal','15.50',1,UUID());

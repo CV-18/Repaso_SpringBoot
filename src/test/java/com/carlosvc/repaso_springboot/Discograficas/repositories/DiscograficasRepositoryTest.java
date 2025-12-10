@@ -21,23 +21,19 @@ class DiscograficasRepositoryTest {
     @Autowired
     private DiscograficasRepository repositorio;
     @Autowired
-    private TestEntityManager entityManager; // EntityManager para hacer las pruebas
+    private TestEntityManager entityManager;
 
     @BeforeEach
     void setUp() {
-        // Insertamos un titular antes de cada test
         entityManager.persist(discografica);
         entityManager.persist(discografica2);
-        // Sincroniza los cambios en los objetos del contexto de persistencia con la BD
         entityManager.flush();
     }
 
     @Test
     void findAll() {
-        // Act
         List<Discografica> titulares = repositorio.findAll();
 
-        // Assert
         assertAll("findAll",
                 () -> assertNotNull(titulares),
                 () -> assertFalse(titulares.isEmpty())
@@ -46,10 +42,8 @@ class DiscograficasRepositoryTest {
 
     @Test
     void findByNombre() {
-        // Act
         List<Discografica> discograficas = repositorio.findByNombreContainingIgnoreCase("Altar");
 
-        // Assert
         assertAll("findAllByNombre",
                 () -> assertNotNull(discograficas),
                 () -> assertFalse(discograficas.isEmpty()),
@@ -59,10 +53,8 @@ class DiscograficasRepositoryTest {
 
     @Test
     void findById() {
-        // Act
         Discografica discografica2 = repositorio.findById(2L).orElse(null);
 
-        // Assert
         assertAll("findById",
                 () -> assertNotNull(discografica2),
                 () -> assertEquals("Black Light", discografica2.getNombre())
@@ -71,19 +63,15 @@ class DiscograficasRepositoryTest {
 
     @Test
     void findByIdNotFound() {
-        // Act
         Discografica discografica = repositorio.findById(100L).orElse(null);
 
-        // Assert
         assertNull(discografica);
     }
 
     @Test
     void save() {
-        // Act
         Discografica discografica = repositorio.save(Discografica.builder().nombre("Black Madness").build());
 
-        // Assert
         assertAll("save",
                 () -> assertNotNull(discografica),
                 () -> assertEquals("Black Madness", discografica.getNombre())
@@ -92,14 +80,12 @@ class DiscograficasRepositoryTest {
 
     @Test
     void update() {
-        // Act
         var discograficaExistente = repositorio.findById(1L).orElse(null);
         Discografica discograficaActualizar = Discografica.builder()
                 .id(discograficaExistente.getId())
                 .nombre("Black Madness").build();
         Discografica discograficaActualizada = repositorio.save(discograficaActualizar);
 
-        // Assert
         assertAll("update",
                 () -> assertNotNull(discograficaActualizada),
                 () -> assertEquals("Black Madness", discograficaActualizada.getNombre())
@@ -108,22 +94,16 @@ class DiscograficasRepositoryTest {
 
     @Test
     void delete() {
-        // Act
         var discograficaBorrar = repositorio.findById(1L).orElse(null);
         repositorio.delete(discograficaBorrar);
         Discografica discograficaBorrada = repositorio.findById(1L).orElse(null);
 
-        // Assert
         assertNull(discograficaBorrada);
     }
 
-    // Para comprobar la diferencia entre usar FetchType.EAGER o LAZY en la relación de titular con tarjetas
-    // hay que añadir o quitar fetch = FetchType.EAGER a la anotación @OneToMany.  No se puede hacer por código.
-    // En este tipo de relación la opción por defecto es LAZY.
+
     @Test
     void test_FetchType_EAGER_vs_LAZY() {
-        // Vacía la cache del contexto de persistencia (L1 Cache) para poder ver todas
-        // las consultas a la BD en la consola
         entityManager.clear();
 
         Discografica discografica = repositorio.findById(1L).orElse(null);

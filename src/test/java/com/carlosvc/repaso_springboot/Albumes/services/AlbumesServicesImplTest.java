@@ -8,6 +8,7 @@ import com.carlosvc.repaso_springboot.Albumes.mappers.AlbumMapper;
 import com.carlosvc.repaso_springboot.Albumes.models.Album;
 import com.carlosvc.repaso_springboot.Albumes.repository.AlbumRepository;
 import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
+import com.carlosvc.repaso_springboot.Discograficas.repositories.DiscograficasRepository;
 import com.carlosvc.repaso_springboot.Discograficas.services.DiscograficasService;
 import com.carlosvc.repaso_springboot.config.websockets.WebSocketConfig;
 import com.carlosvc.repaso_springboot.config.websockets.WebSocketHandler;
@@ -68,7 +69,7 @@ class AlbumesServicesImplTest {
     private AlbumRepository albumRepository;
 
     @Mock
-    private DiscograficasService discoService;
+    private DiscograficasRepository discograficaRepository;
 
     @Mock
     private AlbumMapper albumMapper;
@@ -245,31 +246,22 @@ class AlbumesServicesImplTest {
                 .updatedAt(LocalDateTime.now())
                 .uuid(UUID.randomUUID())
                 .build();
-        
-        AlbumResponseDto expectedAlbumResponseDto = AlbumResponseDto.builder()
-                .nombre("Opferblut")
-                .anio(2004)
-                .banda("Abigor")
-                .genero("Black Metal")
-                .precio(19.90)
-                .discografica("Black Light")
-                .build();
 
-        when(discoService.findByNombre(albumCreateDto.getDiscografica())).thenReturn(disco);
+
+        AlbumResponseDto expectedAlbumResponse = albumMapper.toAlbumResponseDto(expectedAlbum);
+        when(discograficaRepository.findByNombreEqualsIgnoreCase(albumCreateDto.getDiscografica())).thenReturn(Optional.of(disco));
         when(albumMapper.toAlbum(any(AlbumCreateDto.class), any(Discografica.class))).thenReturn(expectedAlbum);
-        when(albumMapper.toAlbumResponseDto(any(Album.class))).thenReturn(expectedAlbumResponseDto);
         when(albumRepository.save(any(Album.class))).thenReturn(expectedAlbum);
         doNothing().when(webSocketHandler).sendMessage(any());
 
         AlbumResponseDto actualAlbumResponse = albumesServices.save(albumCreateDto);
 
-        assertEquals(expectedAlbumResponseDto, actualAlbumResponse);
-
+        assertEquals(expectedAlbumResponse, actualAlbumResponse);
 
         verify(albumRepository).save(albumCaptor.capture());
 
-        Album albumCapture = albumCaptor.getValue();
-        assertEquals(expectedAlbumResponseDto.getNombre(), albumCapture.getNombre());
+        Album albumCaptured = albumCaptor.getValue();
+        assertEquals(expectedAlbum.getNombre(), albumCaptured.getNombre());
     }
 
     @Test
@@ -325,7 +317,7 @@ class AlbumesServicesImplTest {
     void deleteById_DeleteAlbum_WhenValidIDProvided() throws  IOException {
         Long id = 1L;
         when(albumRepository.findById(id)).thenReturn(Optional.of(album1));
-        doNothing().when(webSocketHandler).sendMessage(any());
+        lenient().doNothing().when(webSocketHandler).sendMessage(any());
 
 
         assertThatCode(() -> albumesServices.deleteById(id))

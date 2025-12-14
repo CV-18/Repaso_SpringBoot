@@ -95,20 +95,16 @@ class DiscograficasServicesIMPLTest {
 
     @Test
     public void testSaveConflict() {
-        // Arrange
         when(discograficasRepository.findByNombreEqualsIgnoreCase(anyString())).thenReturn(Optional.of(discografica));
 
-        // Act
         var res = assertThrows(DiscograficaConfictExcepcion.class,
                 () -> discograficasServicesIMPL.save(discograficaRequestDTO));
 
-        // Assert
         assertAll("saveConflict",
                 () -> assertNotNull(res),
                 () -> assertEquals("Ya existe una discografica con el nombre: Black Light", res.getMessage())
         );
 
-        // Verify
         verify(discograficasRepository, times(1)).findByNombreEqualsIgnoreCase(anyString());
         verify(discograficasRepository, times(0)).save(any(Discografica.class));
     }
@@ -135,21 +131,17 @@ class DiscograficasServicesIMPLTest {
 
     @Test
     public void testUpdateConflict() {
-        // Arrange
         when(discograficasRepository.findById(anyLong())).thenReturn(Optional.of(discografica));
         when(discograficasRepository.findByNombreEqualsIgnoreCase(anyString())).thenReturn(Optional.of(discografica));
 
-        // Act, el id no debe ser igual, no se puede actualizar, porqe ya existe
         var res = assertThrows(DiscograficaConfictExcepcion.class,
                 () -> discograficasServicesIMPL.update(2L, discograficaRequestDTO));
 
-        // Assert
         assertAll("updateConflict",
                 () -> assertNotNull(res),
                 () -> assertEquals("Ya existe una discografica con el nombre: Black Light", res.getMessage())
         );
 
-        // Verify
         verify(discograficasRepository, times(1)).findById(anyLong());
         verify(discograficasRepository, times(1)).findByNombreEqualsIgnoreCase(anyString());
         verify(discograficasRepository, times(0)).save(any(Discografica.class));

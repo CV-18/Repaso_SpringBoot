@@ -165,7 +165,6 @@ class DiscograficaRestControllerTest {
 
     @Test
     void create_whenNombreExists() {
-        // Arrange
         String requestBody = """
            {
               "nombre": "Black Light"
@@ -294,7 +293,6 @@ class DiscograficaRestControllerTest {
 
         assertThat(result)
                 .hasStatus(HttpStatus.CONFLICT)
-                // throws TitularesConflictEsception
                 .hasFailed().failure()
                 .isInstanceOf(DiscograficaConfictExcepcion.class)
                 .hasMessageContaining("Ya existe una discografica");

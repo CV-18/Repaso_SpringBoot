@@ -4,12 +4,14 @@ package com.carlosvc.repaso_springboot.Albumes.services;
 import com.carlosvc.repaso_springboot.Albumes.dto.AlbumCreateDto;
 import com.carlosvc.repaso_springboot.Albumes.dto.AlbumResponseDto;
 import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
+import com.carlosvc.repaso_springboot.Albumes.excepcions.AlbumBadRequestExcepcion;
 import com.carlosvc.repaso_springboot.Albumes.excepcions.AlbumBadUuidExcepcion;
 import com.carlosvc.repaso_springboot.Albumes.excepcions.AlbumNotFoundExcepcion;
 import com.carlosvc.repaso_springboot.Albumes.mappers.AlbumMapper;
 import com.carlosvc.repaso_springboot.Albumes.models.Album;
 import com.carlosvc.repaso_springboot.Albumes.repository.AlbumRepository;
 import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
+import com.carlosvc.repaso_springboot.Discograficas.repositories.DiscograficasRepository;
 import com.carlosvc.repaso_springboot.Discograficas.services.DiscograficasService;
 import com.carlosvc.repaso_springboot.config.websockets.WebSocketConfig;
 import com.carlosvc.repaso_springboot.config.websockets.WebSocketHandler;
@@ -24,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +47,7 @@ import java.util.stream.Collectors;
 public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
     private final AlbumRepository albumRepository;
     private final AlbumMapper albumMapper;
-    private final DiscograficasService discograficasService;
+    private final DiscograficasRepository discograficasRepository;
 
     private final WebSocketConfig webSocketConfig;
     private final ObjectMapper objectMapper;
@@ -109,6 +112,26 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
                 .orElseThrow(() -> new AlbumNotFoundExcepcion(id)));
     }
 
+    @Override
+    public Page<AlbumResponseDto> findByUsuarioId(Long usuarioId, Pageable pageable) {
+        log.info("Obteniendo albumes del usuario: {}",usuarioId);
+        return albumRepository.findByUsuarioId(usuarioId, pageable)
+                .map(albumMapper::toAlbumResponseDto);
+
+    }
+
+    @Override
+    public AlbumResponseDto findByUsuarioId(Long usuarioId, Long idAlbum) {
+        log.info("Obteniendo albumes del usuario con id: {}", usuarioId);
+        var albumes = albumRepository.findByUsuarioId(usuarioId);
+        var albumEncontrado = albumes.stream().filter(a -> a.getId().equals(idAlbum))
+                .findFirst().orElse(null);
+        if (albumEncontrado == null){
+            throw new AlbumBadRequestExcepcion("La album " + idAlbum + " no corresponde a este usuario");
+        }
+        return albumMapper.toAlbumResponseDto(albumEncontrado);
+    }
+
 
     @Cacheable(key = "#uuid")
     @Override
@@ -125,19 +148,43 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
 
     }
 
+    public Discografica checkDiscografica(String nombreDiscografica){
+        log.info("Buscando discografica por nombre: " + nombreDiscografica);
+        var discografica = discograficasRepository.findByNombreEqualsIgnoreCase(nombreDiscografica);
+        if (discografica.isEmpty() || discografica.get().getIsDeleted()){
+            throw new AlbumBadRequestExcepcion("La discografica " + nombreDiscografica + " no existe");
+
+        }
+        return discografica.get();
+    }
+
     @Cacheable(key = "#result.id")
     @Override
     public AlbumResponseDto save(AlbumCreateDto albumCreateDto) {
         log.info("Guardando tarjeta: " + albumCreateDto);
-        var discografica = discograficasService.findByNombre(albumCreateDto.getDiscografica());
+        Discografica discografica = checkDiscografica(albumCreateDto.getDiscografica());
         Album albumsaved = albumRepository.save(albumMapper.toAlbum(albumCreateDto, discografica));
         onChange(Notificacion.Tipo.CREATED, albumsaved);
 
         return albumMapper.toAlbumResponseDto(albumsaved);
     }
 
-    @Cacheable(key = "#result.id")
+    @Override
+    public AlbumResponseDto save(AlbumCreateDto albumCreateDto, Long usuarioId) {
+        log.info("Guardando album: {} de usuario: {}",albumCreateDto,usuarioId);
+        Discografica discografica = checkDiscografica(albumCreateDto.getDiscografica());
+        var usuario = discografica.getUsuario();
+        if((usuario != null) && (!usuario.getId().equals(usuarioId))) {
+            throw new AlbumBadRequestExcepcion("El usuario no se corresponde con el titular");
+        }
+        Album albumsaved = albumRepository.save(albumMapper.toAlbum(albumCreateDto, discografica));
+        onChange(Notificacion.Tipo.CREATED, albumsaved);
+        return albumMapper.toAlbumResponseDto(albumsaved);
+    }
 
+
+
+    @Cacheable(key = "#result.id")
     @Override
     public AlbumResponseDto update(Long id, AlbumUpdateDto albumUpdateDto) {
         log.info("Actualizando tarjeta por id: " + id);
@@ -148,11 +195,44 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
         return albumMapper.toAlbumResponseDto(albumUpdate);
     }
 
+    @CachePut(key = "#result.id")
+    @Override
+    public AlbumResponseDto update(Long id, AlbumUpdateDto albumUpdateDto, Long usuarioId) {
+        log.info("Actualizando tarjeta por id: {}", id);
+
+        var albumActual = albumRepository.findById(id).orElseThrow(() -> new AlbumNotFoundExcepcion(id));
+        var usuario = albumActual.getDiscografica().getUsuario();
+        if ((usuario != null) && (!usuario.getId().equals(usuarioId))){
+            throw new AlbumBadRequestExcepcion("El album " + albumUpdateDto.getNombre() + " no corresponde a este usuario");
+
+        }
+        Album albumUpdate = albumRepository.save(
+                albumMapper.toAlbum(albumUpdateDto, albumActual));
+        onChange(Notificacion.Tipo.UPDATE,  albumUpdate);
+        return albumMapper.toAlbumResponseDto(
+                albumUpdate
+
+        );
+    }
+
     @CacheEvict(key = "#id")
     @Override
     public void deleteById(Long id) {
         log.debug("Borrando tarjeta por id: " + id);
         Album albumDeleted = albumRepository.findById(id).orElseThrow(() -> new AlbumNotFoundExcepcion(id));
+        albumRepository.deleteById(id);
+        onChange(Notificacion.Tipo.DELETE,  albumDeleted);
+    }
+
+    @CacheEvict(key = "#id")
+    @Override
+    public void deleteById(Long id, Long usuarioId) {
+        log.debug("Borrando tarjeta por id: " + id);
+        Album albumDeleted = albumRepository.findById(id).orElseThrow(() -> new AlbumNotFoundExcepcion(id));
+        var usuario = albumDeleted.getDiscografica().getUsuario();
+        if((usuario != null) && (!usuario.getId().equals(usuarioId))){
+            throw new AlbumBadRequestExcepcion("El album " + id + " no corresponde a este usuario");
+        }
         albumRepository.deleteById(id);
         onChange(Notificacion.Tipo.DELETE,  albumDeleted);
     }

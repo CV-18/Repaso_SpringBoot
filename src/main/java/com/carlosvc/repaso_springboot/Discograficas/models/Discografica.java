@@ -1,6 +1,7 @@
 package com.carlosvc.repaso_springboot.Discograficas.models;
 
 import com.carlosvc.repaso_springboot.Albumes.models.Album;
+import com.carlosvc.repaso_springboot.users.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,4 +40,7 @@ public class Discografica {
     @OneToMany(mappedBy = "discografica")
     @JsonIgnoreProperties("discografica")
     private List<Album> albumes;
+
+    @OneToOne(mappedBy = "discografica")
+    private User usuario;
 }

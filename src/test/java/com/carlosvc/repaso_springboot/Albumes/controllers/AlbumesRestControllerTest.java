@@ -1,10 +1,10 @@
 package com.carlosvc.repaso_springboot.Albumes.controllers;
 
-import com.carlosvc.repaso_springboot.Albumes.dto.AlbumCreateDto;
-import com.carlosvc.repaso_springboot.Albumes.dto.AlbumResponseDto;
-import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
-import com.carlosvc.repaso_springboot.Albumes.excepcions.AlbumNotFoundExcepcion;
-import com.carlosvc.repaso_springboot.Albumes.services.AlbumesService;
+import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumCreateDto;
+import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumResponseDto;
+import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumUpdateDto;
+import com.carlosvc.repaso_springboot.rest.Albumes.excepcions.AlbumNotFoundExcepcion;
+import com.carlosvc.repaso_springboot.rest.Albumes.services.AlbumesService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

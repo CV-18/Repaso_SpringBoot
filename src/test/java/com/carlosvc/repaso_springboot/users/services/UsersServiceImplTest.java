@@ -1,14 +1,15 @@
 package com.carlosvc.repaso_springboot.users.services;
 
-import com.carlosvc.repaso_springboot.Albumes.repository.AlbumRepository;
-import com.carlosvc.repaso_springboot.users.dto.UserInfoResponse;
-import com.carlosvc.repaso_springboot.users.dto.UserRequest;
-import com.carlosvc.repaso_springboot.users.dto.UserResponse;
-import com.carlosvc.repaso_springboot.users.exceptions.UserNameOrEmailExists;
-import com.carlosvc.repaso_springboot.users.exceptions.UserNotFound;
-import com.carlosvc.repaso_springboot.users.mappers.UserMapper;
-import com.carlosvc.repaso_springboot.users.models.User;
-import com.carlosvc.repaso_springboot.users.repositories.UserRepository;
+import com.carlosvc.repaso_springboot.rest.Albumes.repository.AlbumRepository;
+import com.carlosvc.repaso_springboot.rest.users.dto.UserInfoResponse;
+import com.carlosvc.repaso_springboot.rest.users.dto.UserRequest;
+import com.carlosvc.repaso_springboot.rest.users.dto.UserResponse;
+import com.carlosvc.repaso_springboot.rest.users.exceptions.UserNameOrEmailExists;
+import com.carlosvc.repaso_springboot.rest.users.exceptions.UserNotFound;
+import com.carlosvc.repaso_springboot.rest.users.mappers.UserMapper;
+import com.carlosvc.repaso_springboot.rest.users.models.User;
+import com.carlosvc.repaso_springboot.rest.users.repositories.UserRepository;
+import com.carlosvc.repaso_springboot.rest.users.services.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

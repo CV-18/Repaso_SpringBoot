@@ -1,12 +1,12 @@
 package com.carlosvc.repaso_springboot.auth.controllers;
 
-import com.carlosvc.repaso_springboot.auth.dto.JwtAuthResponse;
-import com.carlosvc.repaso_springboot.auth.dto.UserSignInRequest;
-import com.carlosvc.repaso_springboot.auth.dto.UserSignUpRequest;
-import com.carlosvc.repaso_springboot.auth.exceptions.AuthDifferentPasswords;
-import com.carlosvc.repaso_springboot.auth.exceptions.AuthExistingUsernameOrEmail;
-import com.carlosvc.repaso_springboot.auth.exceptions.AuthSignInNotValid;
-import com.carlosvc.repaso_springboot.auth.services.authentication.AuthenticationService;
+import com.carlosvc.repaso_springboot.rest.auth.dto.JwtAuthResponse;
+import com.carlosvc.repaso_springboot.rest.auth.dto.UserSignInRequest;
+import com.carlosvc.repaso_springboot.rest.auth.dto.UserSignUpRequest;
+import com.carlosvc.repaso_springboot.rest.auth.exceptions.AuthDifferentPasswords;
+import com.carlosvc.repaso_springboot.rest.auth.exceptions.AuthExistingUsernameOrEmail;
+import com.carlosvc.repaso_springboot.rest.auth.exceptions.AuthSignInNotValid;
+import com.carlosvc.repaso_springboot.rest.auth.services.authentication.AuthenticationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

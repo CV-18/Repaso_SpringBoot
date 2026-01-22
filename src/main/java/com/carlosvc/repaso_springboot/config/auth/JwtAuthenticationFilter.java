@@ -1,7 +1,7 @@
 package com.carlosvc.repaso_springboot.config.auth;
 
-import com.carlosvc.repaso_springboot.auth.services.jwt.JwtService;
-import com.carlosvc.repaso_springboot.auth.services.users.AuthUsersService;
+import com.carlosvc.repaso_springboot.rest.auth.services.jwt.JwtService;
+import com.carlosvc.repaso_springboot.rest.auth.services.users.AuthUsersService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,7 +1,7 @@
-package com.carlosvc.repaso_springboot.Albumes.repository;
+package com.carlosvc.repaso_springboot.rest.Albumes.repository;
 
-import com.carlosvc.repaso_springboot.Albumes.models.Album;
-import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
+import com.carlosvc.repaso_springboot.rest.Albumes.models.Album;
+import com.carlosvc.repaso_springboot.rest.Discograficas.models.Discografica;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,0 +1,43 @@
+
+
+
+type Query {
+    albumes : [Album!]!
+
+    albumesById(id: ID!): Album
+
+
+    discograficas: [Discograficas!]!
+
+    discograficasById(id: ID!): Discograficas
+
+
+    discograficasByNombre(nombre: String!): [Discograficas!]!
+}
+
+
+type Album {
+    id: ID!
+    nombre: String!
+    anio: String!
+    banda: String!
+    genero: String!
+    precio: Float!
+    uuid: String!             # Identificador UUID unico de la tarjeta (para APIs externas)
+    createdAt: String!        # Fecha y hora de creación (formato ISO 8601)
+    updatedAt: String!        # Fecha y hora de ultima modificación (formato ISO 8601)
+    isDeleted: Boolean!       # Indica si la tarjeta está marcada como eliminada (borrado logico)
+    discografica: Discograficas!
+
+
+
+}
+
+type Discograficas {
+    id: ID!
+    nombre: String!
+    createdAt: String!
+    updatedAt: String!
+    isDeleted: Boolean!
+    album: [Album!]!
+}

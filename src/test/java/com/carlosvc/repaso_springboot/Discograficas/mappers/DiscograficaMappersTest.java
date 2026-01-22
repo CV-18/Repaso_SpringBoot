@@ -1,7 +1,8 @@
 package com.carlosvc.repaso_springboot.Discograficas.mappers;
 
-import com.carlosvc.repaso_springboot.Discograficas.dto.DiscograficaRequestDTO;
-import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
+import com.carlosvc.repaso_springboot.rest.Discograficas.dto.DiscograficaRequestDTO;
+import com.carlosvc.repaso_springboot.rest.Discograficas.mappers.DiscograficaMappers;
+import com.carlosvc.repaso_springboot.rest.Discograficas.models.Discografica;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

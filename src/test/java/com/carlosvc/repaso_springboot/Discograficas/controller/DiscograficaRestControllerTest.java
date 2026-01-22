@@ -1,10 +1,10 @@
 package com.carlosvc.repaso_springboot.Discograficas.controller;
 
-import com.carlosvc.repaso_springboot.Discograficas.dto.DiscograficaRequestDTO;
-import com.carlosvc.repaso_springboot.Discograficas.excepcions.DiscograficaConfictExcepcion;
-import com.carlosvc.repaso_springboot.Discograficas.excepcions.DiscograficaNotFoundExcepcion;
-import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
-import com.carlosvc.repaso_springboot.Discograficas.services.DiscograficasService;
+import com.carlosvc.repaso_springboot.rest.Discograficas.dto.DiscograficaRequestDTO;
+import com.carlosvc.repaso_springboot.rest.Discograficas.excepcions.DiscograficaConfictExcepcion;
+import com.carlosvc.repaso_springboot.rest.Discograficas.excepcions.DiscograficaNotFoundExcepcion;
+import com.carlosvc.repaso_springboot.rest.Discograficas.models.Discografica;
+import com.carlosvc.repaso_springboot.rest.Discograficas.services.DiscograficasService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

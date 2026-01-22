@@ -1,15 +1,14 @@
-package com.carlosvc.repaso_springboot.Albumes.services;
+package com.carlosvc.repaso_springboot.rest.Albumes.services;
 
-import com.carlosvc.repaso_springboot.Albumes.dto.AlbumCreateDto;
-import com.carlosvc.repaso_springboot.Albumes.dto.AlbumResponseDto;
-import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
-import com.carlosvc.repaso_springboot.Albumes.excepcions.AlbumNotFoundExcepcion;
-import com.carlosvc.repaso_springboot.Albumes.mappers.AlbumMapper;
-import com.carlosvc.repaso_springboot.Albumes.models.Album;
-import com.carlosvc.repaso_springboot.Albumes.repository.AlbumRepository;
-import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
-import com.carlosvc.repaso_springboot.Discograficas.repositories.DiscograficasRepository;
-import com.carlosvc.repaso_springboot.Discograficas.services.DiscograficasService;
+import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumCreateDto;
+import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumResponseDto;
+import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumUpdateDto;
+import com.carlosvc.repaso_springboot.rest.Albumes.excepcions.AlbumNotFoundExcepcion;
+import com.carlosvc.repaso_springboot.rest.Albumes.mappers.AlbumMapper;
+import com.carlosvc.repaso_springboot.rest.Albumes.models.Album;
+import com.carlosvc.repaso_springboot.rest.Albumes.repository.AlbumRepository;
+import com.carlosvc.repaso_springboot.rest.Discograficas.models.Discografica;
+import com.carlosvc.repaso_springboot.rest.Discograficas.repositories.DiscograficasRepository;
 import com.carlosvc.repaso_springboot.config.websockets.WebSocketConfig;
 import com.carlosvc.repaso_springboot.config.websockets.WebSocketHandler;
 import com.carlosvc.repaso_springboot.websockets.notifications.mappers.AlbumNotificationMApper;

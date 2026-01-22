@@ -1,6 +1,7 @@
 package com.carlosvc.repaso_springboot.Discograficas.repositories;
 
-import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
+import com.carlosvc.repaso_springboot.rest.Discograficas.models.Discografica;
+import com.carlosvc.repaso_springboot.rest.Discograficas.repositories.DiscograficasRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

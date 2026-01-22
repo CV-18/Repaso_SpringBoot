@@ -1,10 +1,11 @@
 package com.carlosvc.repaso_springboot.Discograficas.services;
 
-import com.carlosvc.repaso_springboot.Discograficas.dto.DiscograficaRequestDTO;
-import com.carlosvc.repaso_springboot.Discograficas.excepcions.DiscograficaConfictExcepcion;
-import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
-import com.carlosvc.repaso_springboot.Discograficas.repositories.DiscograficasRepository;
-import com.carlosvc.repaso_springboot.Discograficas.mappers.DiscograficaMappers;
+import com.carlosvc.repaso_springboot.rest.Discograficas.dto.DiscograficaRequestDTO;
+import com.carlosvc.repaso_springboot.rest.Discograficas.excepcions.DiscograficaConfictExcepcion;
+import com.carlosvc.repaso_springboot.rest.Discograficas.models.Discografica;
+import com.carlosvc.repaso_springboot.rest.Discograficas.repositories.DiscograficasRepository;
+import com.carlosvc.repaso_springboot.rest.Discograficas.mappers.DiscograficaMappers;
+import com.carlosvc.repaso_springboot.rest.Discograficas.services.DiscograficasServicesIMPL;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

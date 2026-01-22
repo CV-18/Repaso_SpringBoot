@@ -1,10 +1,10 @@
 package com.carlosvc.repaso_springboot.users.controllers;
 
-import com.carlosvc.repaso_springboot.users.dto.UserInfoResponse;
-import com.carlosvc.repaso_springboot.users.dto.UserRequest;
-import com.carlosvc.repaso_springboot.users.dto.UserResponse;
-import com.carlosvc.repaso_springboot.users.exceptions.UserNotFound;
-import com.carlosvc.repaso_springboot.users.services.UsersService;
+import com.carlosvc.repaso_springboot.rest.users.dto.UserInfoResponse;
+import com.carlosvc.repaso_springboot.rest.users.dto.UserRequest;
+import com.carlosvc.repaso_springboot.rest.users.dto.UserResponse;
+import com.carlosvc.repaso_springboot.rest.users.exceptions.UserNotFound;
+import com.carlosvc.repaso_springboot.rest.users.services.UsersService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

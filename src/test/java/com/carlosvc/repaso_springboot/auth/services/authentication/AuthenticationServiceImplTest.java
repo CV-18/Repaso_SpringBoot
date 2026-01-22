@@ -1,14 +1,15 @@
 package com.carlosvc.repaso_springboot.auth.services.authentication;
 
-import com.carlosvc.repaso_springboot.auth.dto.JwtAuthResponse;
-import com.carlosvc.repaso_springboot.auth.dto.UserSignInRequest;
-import com.carlosvc.repaso_springboot.auth.dto.UserSignUpRequest;
-import com.carlosvc.repaso_springboot.auth.exceptions.AuthDifferentPasswords;
-import com.carlosvc.repaso_springboot.auth.exceptions.AuthExistingUsernameOrEmail;
-import com.carlosvc.repaso_springboot.auth.exceptions.AuthSignInNotValid;
-import com.carlosvc.repaso_springboot.auth.repositories.AuthUsersRepository;
-import com.carlosvc.repaso_springboot.auth.services.jwt.JwtService;
-import com.carlosvc.repaso_springboot.users.models.User;
+import com.carlosvc.repaso_springboot.rest.auth.dto.JwtAuthResponse;
+import com.carlosvc.repaso_springboot.rest.auth.dto.UserSignInRequest;
+import com.carlosvc.repaso_springboot.rest.auth.dto.UserSignUpRequest;
+import com.carlosvc.repaso_springboot.rest.auth.exceptions.AuthDifferentPasswords;
+import com.carlosvc.repaso_springboot.rest.auth.exceptions.AuthExistingUsernameOrEmail;
+import com.carlosvc.repaso_springboot.rest.auth.exceptions.AuthSignInNotValid;
+import com.carlosvc.repaso_springboot.rest.auth.repositories.AuthUsersRepository;
+import com.carlosvc.repaso_springboot.rest.auth.services.authentication.AuthenticationServiceImpl;
+import com.carlosvc.repaso_springboot.rest.auth.services.jwt.JwtService;
+import com.carlosvc.repaso_springboot.rest.users.models.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

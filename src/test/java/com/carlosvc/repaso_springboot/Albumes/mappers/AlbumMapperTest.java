@@ -1,9 +1,10 @@
 package com.carlosvc.repaso_springboot.Albumes.mappers;
 
-import com.carlosvc.repaso_springboot.Albumes.dto.AlbumCreateDto;
-import com.carlosvc.repaso_springboot.Albumes.dto.AlbumUpdateDto;
-import com.carlosvc.repaso_springboot.Albumes.models.Album;
-import com.carlosvc.repaso_springboot.Discograficas.models.Discografica;
+import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumCreateDto;
+import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumUpdateDto;
+import com.carlosvc.repaso_springboot.rest.Albumes.mappers.AlbumMapper;
+import com.carlosvc.repaso_springboot.rest.Albumes.models.Album;
+import com.carlosvc.repaso_springboot.rest.Discograficas.models.Discografica;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

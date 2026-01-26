@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     @Modifying
     @Query("UPDATE User u SET u.isDeleted =true WHERE u.id = :id")
     void updateIsDeletedToTrueById(Long id);
-    
+
+    Optional<User> findByUsername(String username);
+
     List<User> findAllByIsDeletedFalse();
 }

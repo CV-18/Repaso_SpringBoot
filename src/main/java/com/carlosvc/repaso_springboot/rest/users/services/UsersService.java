@@ -22,4 +22,7 @@ public interface UsersService {
     void deleteById(Long id);
 
     List<User> findAllActiveUser();
+
+    Optional<User> findByUsername(String username);
+    void save(User user);
 }

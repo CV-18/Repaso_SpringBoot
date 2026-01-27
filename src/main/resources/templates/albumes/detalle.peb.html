@@ -1,0 +1,22 @@
+{% extends "fragments/layout" %}
+
+{% block body %}
+
+
+{% if album is empty %}
+<div class="alert alert-info text-center">
+  <i class="bi bi-info-circle"></i> {{ message('label.album.empty') }}
+</div>
+{% else %}
+<h2> {{ message('label.album.detalle') }} {{ album.id }}</h2>
+<ul>
+  <li> {{ message('label.album.nombre') }}: {{ album.nombre }}</li>
+  <li> {{ message('label.album.anio') }}: {{ album.anio }}</li>
+  <li> {{ message('label.album.banda') }}: {{ album.banda }}</li>
+  <li> {{ message('label.album.genero') }}: {{ album.genero }}</li>
+  <li> {{ message('label.album.precio') }}: {{ album.precio }}</li>
+  <li> {{ message('label.album.discografica') }}: {{ album.discografica.nombre }}</li>
+</ul>
+{% endif %}
+
+{% endblock %}

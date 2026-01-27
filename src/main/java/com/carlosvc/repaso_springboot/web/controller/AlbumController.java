@@ -23,7 +23,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("albums")
+@RequestMapping("albumes")
 public class AlbumController {
     private final AlbumesService albumesService;
 
@@ -31,7 +31,7 @@ public class AlbumController {
     public String getById(@PathVariable Long id, Model model) {
         AlbumResponseDto albumResponseDto = albumesService.findById(id);
         model.addAttribute("album", albumResponseDto);
-        return "album/detalle";
+        return "albumes/detalle";
     }
 
     @GetMapping({"", "/", "/lista"})
@@ -41,19 +41,26 @@ public class AlbumController {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
         Page<AlbumResponseDto> albumesPage = albumesService.findAll(
                 Optional.empty(), Optional.empty(), Optional.empty(), pageable);
-        model.addAttribute("albums", albumesPage);
-        return "album/lista";
+        model.addAttribute("page", albumesPage);
+        return "albumes/lista";
     }
 
     @GetMapping("/new")
+    public String nuevaAlbumForm(Model model) {
+        model.addAttribute("album", AlbumCreateDto.builder().build());
+        model.addAttribute("modoEditar", false);
+        return "albumes/form";
+    }
+
+    @PostMapping("/new")
     public String nuevaAlbumSubmit(@Valid @ModelAttribute("album")AlbumCreateDto albumCreateDto, BindingResult bindingResult) {
         log.info("Datos recibidos del formulario: {}", albumCreateDto);
         if (bindingResult.hasErrors()) {
             log.info("hay errores en la validación");
-            return "/album/form";
+            return "albumes/form";
         }else {
             albumesService.save(albumCreateDto);
-            return "redirect:/albums/lista";
+            return "redirect:/albumes/lista";
         }
     }
 
@@ -61,8 +68,8 @@ public class AlbumController {
     @GetMapping("/{id}/edit")
     public String editarAlbumForm(@PathVariable Long id, Model model){
         AlbumResponseDto albumResponseDto = albumesService.findById(id);
-        if (albumResponseDto != null) {
-            return "redirect:/albums/new";
+        if (albumResponseDto == null) {
+            return "redirect:/albumes/new";
         } else {
             AlbumUpdateDto albumUpdateDto = AlbumUpdateDto.builder()
                     .nombre(albumResponseDto.getNombre())
@@ -74,7 +81,7 @@ public class AlbumController {
             model.addAttribute("album", albumResponseDto);
             model.addAttribute("albumId", id);
             model.addAttribute("modoEditar", true);
-            return "album/form";
+            return "albumes/form";
         }
     }
 
@@ -89,17 +96,17 @@ public class AlbumController {
                     "Ha ocurrido un error al actualizar el album");
             model.addAttribute("album", id);
             model.addAttribute("modoEditar", true);
-            return "/album/form";
+            return "albumes/form";
         }
         albumesService.update(id, albumUpdateDto);
         redirectAttributes.addFlashAttribute("message",
                 "Album actualizada correctamente");
-        return "redirect:/albums/{id}";
+        return "redirect:/albumes/" + id;
     }
 
     @GetMapping("/{id}/delete")
     public String borrarAlbum(@PathVariable Long id) {
         albumesService.deleteById(id);
-        return "redirect:/albums/lista";
+        return "redirect:/albumes/lista";
     }
 }

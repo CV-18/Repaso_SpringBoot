@@ -115,6 +115,8 @@ public class SecurityConfig {
     @Order(4)
     public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
         http
+                // Deshabilitamos CSRF temporalmente para probar
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/index", "/public/**", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                         .requestMatchers("/auth/login", "/auth/register").permitAll()
@@ -122,7 +124,9 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/auth/login")
+                        .loginProcessingUrl("/auth/login") // Importante: URL donde se envía el POST
                         .defaultSuccessUrl("/public/index", true)
+                        .failureUrl("/auth/login?error") // URL si falla el login
                         .permitAll()
                 )
                 .logout(logout -> logout

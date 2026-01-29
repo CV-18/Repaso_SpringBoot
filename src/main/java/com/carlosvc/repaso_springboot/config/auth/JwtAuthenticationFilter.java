@@ -28,6 +28,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final AuthUsersService authUsersService;
 
   @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+      String path = request.getRequestURI();
+      // No filtrar rutas que no sean de la API
+      return !path.startsWith("/api/");
+  }
+
+  @Override
   protected void doFilterInternal(@NonNull HttpServletRequest request,
                                   @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
       throws ServletException, IOException {

@@ -4,25 +4,54 @@
 
 {% block body %}
 
-<h2>{% if not modoEditar %}Nuevo {% endif %} Album</h2>
-<form class="form-horizontal" id="add-album-form" method="post"
-      action="{% if modoEditar %}/albumes/{{albumId}}/edit{% else %}/albumes/new{% endif %}">
-  <input name="{{ csrfParamName }}" type="hidden" value="{{ csrfToken }}">
-  <div class="form-group has-feedback">
-    {{ inputField("album", "Nombre", "nombre", "text", album.nombre, _context) }}
-    {{ inputField("album", "Año", "anio", "number", album.anio, _context) }}
-    {{ inputField("album", "Banda", "banda", "text", album.banda, _context) }}
-    {{ inputField("album", "Genero", "genero", "text", album.genero, _context) }}
-    {{ inputField("album", "Precio", "precio", "number", album.precio, _context) }}
-    {{ inputField("album", "Discografica", "discografica", "text", album.discografica, _context) }}
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button
-        class="btn btn-primary" type="submit">{{ modoEditar ? 'Actualizar Album' : 'Añadir Album' }}
-      </button>
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card bg-dark border-secondary shadow-lg">
+            <div class="card-header bg-black border-bottom border-danger py-3">
+                <h3 class="mb-0 text-white">
+                    {% if not modoEditar %}
+                        <i class="bi bi-plus-circle text-danger me-2"></i>Nuevo Album
+                    {% else %}
+                        <i class="bi bi-pencil-square text-warning me-2"></i>Editar Album
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form class="form-horizontal" id="add-album-form" method="post"
+                      action="{% if modoEditar %}/albumes/{{albumId}}/edit{% else %}/albumes/new{% endif %}">
+                  <input name="{{ csrfParamName }}" type="hidden" value="{{ csrfToken }}">
+
+                  <div class="row g-3">
+                      <div class="col-md-6">
+                        {{ inputField("album", "Nombre", "nombre", "text", album.nombre, _context) }}
+                      </div>
+                      <div class="col-md-6">
+                        {{ inputField("album", "Banda", "banda", "text", album.banda, _context) }}
+                      </div>
+                      <div class="col-md-4">
+                        {{ inputField("album", "Año", "anio", "number", album.anio, _context) }}
+                      </div>
+                      <div class="col-md-4">
+                        {{ inputField("album", "Genero", "genero", "text", album.genero, _context) }}
+                      </div>
+                      <div class="col-md-4">
+                        {{ inputField("album", "Precio (€)", "precio", "number", album.precio, _context) }}
+                      </div>
+                      <div class="col-12">
+                        {{ inputField("album", "Discografica", "discografica", "text", album.discografica, _context) }}
+                      </div>
+                  </div>
+
+                  <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top border-secondary">
+                      <a href="/albumes/lista" class="btn btn-outline-secondary">Cancelar</a>
+                      <button class="btn btn-danger px-4" type="submit">
+                          <i class="bi bi-save me-1"></i> {{ modoEditar ? 'Actualizar' : 'Guardar' }}
+                      </button>
+                  </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
-</form>
+</div>
 
 {% endblock %}

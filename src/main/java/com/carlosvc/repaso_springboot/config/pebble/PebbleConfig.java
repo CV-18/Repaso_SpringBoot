@@ -29,7 +29,6 @@ public class PebbleConfig {
     };
   }
 
-  // Filtro para formatear fechas
   private static class FormatDateFilter implements Filter {
     @Override
     public Object apply(Object input, Map<String, Object> args, io.pebbletemplates.pebble.template.PebbleTemplate self,
@@ -50,14 +49,12 @@ public class PebbleConfig {
             return sdf.format(date);
           }
           case String _ -> {
-            // Try to parse as LocalDateTime
             try {
               LocalDateTime dateTime = LocalDateTime.parse(input.toString());
               return dateTime.format(formatter);
             } catch (Exception e) {
               return input.toString();
             }
-            // Try to parse as LocalDateTime
           }
           default -> {}
         }
@@ -74,7 +71,6 @@ public class PebbleConfig {
     }
   }
 
-  // Filtro para formatear mes de una fecha
   private static class FormatMonthFilter implements Filter {
     @Override
     public Object apply(Object input, Map<String, Object> args, io.pebbletemplates.pebble.template.PebbleTemplate self,
@@ -102,7 +98,6 @@ public class PebbleConfig {
     }
   }
 
-  // Filtro para formatear fecha y hora completa
   private static class FormatDateTimeFilter implements Filter {
     @Override
     public Object apply(Object input, Map<String, Object> args, io.pebbletemplates.pebble.template.PebbleTemplate self,
@@ -130,7 +125,6 @@ public class PebbleConfig {
     }
   }
 
-  // Filtro para formatear precios
   private static class FormatPriceFilter implements Filter {
     @Override
     public Object apply(Object input, Map<String, Object> args, io.pebbletemplates.pebble.template.PebbleTemplate self,

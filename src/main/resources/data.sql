@@ -11,7 +11,7 @@ INSERT INTO ALBUMES (nombre,anio,banda, genero,precio,discografica_id,uuid)
 -- Contraseña: Admin1
 insert into USUARIOS (nombre, apellidos, username, email, password)
 values ('Admin', 'Administrador', 'admin', 'admin@prueba.net',
-        '$2a$12$RUq2ScW1Kiizu5K4gKoK4OTz80.DWaruhdyfi2lZCB.KeuXTBh0S.');
+        '$2a$10$vPaqZvZkz6jhb7U7k/V/v.5vprfNdOnh4sxi/qpPRkYTzPmFlI9p2');
 
 -- Insertamos sus roles
 insert into USER_ROLES (user_id, roles)

@@ -4,9 +4,11 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-uppercase fw-bold border-start border-5 border-danger ps-3 mb-0">Catálogo de Albumes</h2>
+    {% if isAdmin %}
     <a href="/albumes/new" class="btn btn-danger">
         <i class="bi bi-plus-lg"></i> Nuevo Album
     </a>
+    {% endif %}
 </div>
 
 <!-- Lista de Albumes -->

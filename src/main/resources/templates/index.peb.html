@@ -16,9 +16,11 @@
         <a class="btn btn-danger btn-lg px-4 gap-3" href="/albumes/lista">
             <i class="bi bi-collection-play"></i> Ver Catálogo
         </a>
+        {% if isAdmin %}
         <a class="btn btn-outline-light btn-lg px-4" href="/albumes/new">
             <i class="bi bi-plus-lg"></i> Añadir Album
         </a>
+        {% endif %}
     </div>
     {% else %}
     <h2 class="h3 text-light mb-4">Identifícate para entrar al Pit</h2>

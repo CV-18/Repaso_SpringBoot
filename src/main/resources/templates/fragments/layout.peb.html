@@ -29,11 +29,13 @@
                 <li class="nav-item">
                     <a class="nav-link text-light" href="/albumes/lista">Catálogo</a>
                 </li>
+                {% if isAdmin %}
                 <li class="nav-item">
                     <a class="nav-link text-danger fw-bold" href="/albumes/new">
                         <i class="bi bi-plus-circle"></i> {{ message('nav.new.albumes') }}
                     </a>
                 </li>
+                {% endif %}
                 {% endif %}
             </ul>
             <ul class="navbar-nav ms-auto">

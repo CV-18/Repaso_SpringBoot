@@ -48,8 +48,10 @@
                 <td class="text-end">
                     <div class="btn-group btn-group-sm">
                         <a href="/albumes/{{ album.id }}" class="btn btn-outline-light" title="Ver"><i class="bi bi-eye"></i></a>
+                      {% if isAdmin %}
                         <a href="/albumes/{{ album.id }}/edit" class="btn btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
                         <a href="/albumes/{{ album.id }}/delete" class="btn btn-outline-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres destruir este disco?')"><i class="bi bi-trash"></i></a>
+                      {% endif %}
                     </div>
                 </td>
               </tr>

@@ -31,8 +31,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @RequiredArgsConstructor
 @Configuration
-// Habilitamos la seguridad a nivel de método
-// ahora prePostEnabled está a true por defecto y @Secured se considera desfasado
 @EnableMethodSecurity(jsr250Enabled = true)
 public class SecurityConfig {
   private final UserDetailsService userDetailsService;
@@ -78,15 +76,12 @@ public class SecurityConfig {
                 // El resto de peticiones tienen que estar autenticadas
                 .anyRequest().authenticated())
 
-        // Añadimos el filtro de autenticación
         .authenticationProvider(authenticationProvider()).addFilterBefore(
             jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-    // Devolvemos la configuración
     return http.build();
   }
 
-    // Este filtro permite el acceso a la documentación OpenAPI
     @Bean
     @Order(2)
     public SecurityFilterChain openapiFilterChain(HttpSecurity http) throws Exception {

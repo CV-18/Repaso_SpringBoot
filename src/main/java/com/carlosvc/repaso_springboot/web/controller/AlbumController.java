@@ -24,13 +24,7 @@ public class AlbumController {
 
     @GetMapping("/allalbumes")
     public String allAlbumes(Model model) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> usuario = usersService.findByUsername(username);
-        List<Album> albumes = List.of();
-        if (usuario.isPresent()){
-          albumes = albumesService.buscarPorUsuarioId(usuario.get().getId());
-        }
-
+        List<Album> albumes = albumesService.findAllTotal();
         model.addAttribute("albumes", albumes);
         return "app/albumes/lista";
     }

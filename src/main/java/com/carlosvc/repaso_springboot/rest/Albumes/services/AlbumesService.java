@@ -39,4 +39,6 @@ public interface AlbumesService {
     List<Album> buscarPorUsuarioId(Long usuarioId);
     Optional<Album>buscarPorId(Long id);
 
+    List<Album> findAllTotal();
+
 }

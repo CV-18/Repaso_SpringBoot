@@ -1,18 +1,19 @@
 {% macro inputField(formName, label, name, type, value, context) %}
 <div class="mb-3">
-    <label for="{{ name }}" class="form-label">{{ label }}</label>
-    <input type="{{ type }}"
-           class="form-control {% if hasFieldErrors(formName, name) %}is-invalid{% endif %}"
-           id="{{ name }}"
-           name="{{ name }}"
-           value="{{ value }}"
-           {% if type != 'date' %}placeholder="{{ label }}"{% endif %}>
-    {% if hasFieldErrors(formName, name) %}
-    <div class="invalid-feedback">
-        {% for err in getFieldErrors(formName, name) %}
-        {{ err }}
-        {% endfor %}
-    </div>
-    {% endif %}
+  <label for="{{ name }}" class="form-label">{{ label }}</label>
+  <input type="{{ type }}"
+         class="form-control {% if hasFieldErrors(formName, name) %}is-invalid{% endif %}"
+         id="{{ name }}"
+         name="{{ name }}"
+         value="{{ value }}"
+         {% if name == 'precio' %}step="0.01"{% endif %}
+  {% if type != 'date' %}placeholder="{{ label }}"{% endif %}>
+  {% if hasFieldErrors(formName, name) %}
+  <div class="invalid-feedback">
+    {% for err in getFieldErrors(formName, name) %}
+    {{ err }}
+    {% endfor %}
+  </div>
+  {% endif %}
 </div>
 {% endmacro %}

@@ -278,4 +278,9 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
     public Optional<Album> buscarPorId(Long id) {
         return albumRepository.findById(id);
     }
+
+    @Override
+  public List<Album> findAllTotal() {
+        return albumRepository.findByIsDeleted(false);
+  }
 }

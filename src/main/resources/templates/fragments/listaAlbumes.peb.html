@@ -1,19 +1,15 @@
-{% extends "fragments/layout" %}
-
-{% block body %}
-
 <!-- Lista de Albumes -->
-{% if albumes is empty %}
+{% if page is empty %}
 <div class="alert alert-dark border-danger text-center p-5">
   <i class="bi bi-disc display-4 text-secondary mb-3 d-block"></i>
   <h4 class="text-danger">No hay nada aquí...</h4>
-  <p class="text-muted">No hay discos disponibles.</p>
+  <p class="text-muted">No has añadido ningún disco todavía.</p>
 </div>
 {% else %}
 <div class="card bg-dark border-secondary shadow">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-dark table-hover mb-0 align-middle">
+            <table class="table table-dark table-hover mb-0 align-middle" id="listaAlbumes">
               <thead class="table-secondary text-uppercase small">
                   <tr>
                     <th>ID</th>
@@ -27,18 +23,20 @@
                   </tr>
               </thead>
               <tbody>
-              {% for album in albumes %}
+              {% for album in page.content %}
               <tr>
-                <td class="text-muted">#{{ album.id }}</td>
+                <td class="text-muted albumId">#{{ album.id }}</td>
                 <td class="fw-bold text-white">{{ album.nombre }}</td>
                 <td><span class="badge bg-secondary">{{ album.anio }}</span></td>
                 <td class="text-danger fw-bold">{{ album.banda }}</td>
                 <td>{{ album.genero }}</td>
                 <td class="font-monospace text-success">{{ album.precio }}€</td>
-                <td><small class="text-info">{{ album.discografica.nombre }}</small></td>
+                <td><small class="text-info">{{ album.discografica }}</small></td>
                 <td class="text-end">
                     <div class="btn-group btn-group-sm">
-                        <a href="/albumes/allalbumes/{{ album.id }}" class="btn btn-outline-light" title="Ver"><i class="bi bi-eye"></i></a>
+                        <a href="/albumes/{{ album.id }}" class="btn btn-outline-light" title="Ver"><i class="bi bi-eye"></i></a>
+                        <a href="/albumes/{{ album.id }}/edit" class="btn btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
+                        <a class="borrarAlbumLink btn btn-outline-danger" href="/albumes/{{ album.id }}/delete" title="Eliminar" onclick="return confirm('¿Seguro que quieres destruir este disco?')"><i class="bi bi-trash"></i></a>
                     </div>
                 </td>
               </tr>
@@ -49,4 +47,3 @@
     </div>
 </div>
 {% endif %}
-{% endblock %}

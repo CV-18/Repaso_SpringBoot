@@ -268,4 +268,14 @@ public class AlbumesServicesImpl implements AlbumesService,InitializingBean{
         }
 
     }
+
+    @Override
+    public List<Album> buscarPorUsuarioId(Long usuarioId) {
+        return albumRepository.findByUsuarioId(usuarioId);
+    }
+
+    @Override
+    public Optional<Album> buscarPorId(Long id) {
+        return albumRepository.findById(id);
+    }
 }

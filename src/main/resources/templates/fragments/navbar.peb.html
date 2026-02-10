@@ -1,0 +1,57 @@
+<!-- Navbar: Negra con borde rojo inferior -->
+<nav class="navbar navbar-expand-lg bg-black border-bottom border-danger border-3 mb-4">
+    <div class="container">
+        <a class="navbar-brand text-uppercase fw-bold text-danger tracking-widest" href="/">
+            <i class="bi bi-vinyl-fill"></i> Metal Albums
+        </a>
+        <button class="navbar-toggler border-danger" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link text-light hover-danger" href="/public/index">{{ message('nav.home') }}</a>
+                </li>
+                {% if isAuthenticated %}
+                    {% if isAdmin %}
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/admin/albumes">Administración</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger fw-bold" href="/admin/albumes/new">
+                            <i class="bi bi-plus-circle"></i> {{ message('nav.new.albumes') }}
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/app/albumes/lista">Catálogo</a>
+                    </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                {% if isAuthenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> {{ username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end border-danger">
+                        <li><a class="dropdown-item" href="/app/perfil"><i class="bi bi-person"></i> Mi Perfil</a></li>
+                        <li><hr class="dropdown-divider bg-danger"></li>
+                        <li>
+                            <form action="/auth/logout" method="post">
+                                <input type="hidden" name="{{ csrfParamName }}" value="{{ csrfToken }}"/>
+                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-power"></i> {{ message('nav.logout') }}</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link btn btn-outline-danger text-light ms-2" href="/auth/login">{{ message('nav.login') }}</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -3,6 +3,7 @@ package com.carlosvc.repaso_springboot.rest.Albumes.services;
 import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumCreateDto;
 import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumResponseDto;
 import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumUpdateDto;
+import com.carlosvc.repaso_springboot.rest.Albumes.models.Album;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -34,5 +35,8 @@ public interface AlbumesService {
 
     void deleteById(Long id);
     void deleteById(Long id, Long usuarioId);
+
+    List<Album> buscarPorUsuarioId(Long usuarioId);
+    Optional<Album>buscarPorId(Long id);
 
 }

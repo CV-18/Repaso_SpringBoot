@@ -3,12 +3,10 @@
 {% block body %}
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-uppercase fw-bold border-start border-5 border-danger ps-3 mb-0">Catálogo de Albumes</h2>
-    {% if isAdmin %}
-    <a href="/albumes/new" class="btn btn-danger">
+    <h2 class="text-uppercase fw-bold border-start border-5 border-danger ps-3 mb-0">Administración de Albumes</h2>
+    <a href="/admin/albumes/new" class="btn btn-danger">
         <i class="bi bi-plus-lg"></i> Nuevo Album
     </a>
-    {% endif %}
 </div>
 
 <!-- Lista de Albumes -->
@@ -16,7 +14,7 @@
 <div class="alert alert-dark border-danger text-center p-5">
   <i class="bi bi-disc display-4 text-secondary mb-3 d-block"></i>
   <h4 class="text-danger">No hay nada aquí...</h4>
-  <p class="text-muted">No has añadido ningún disco todavia.</p>
+  <p class="text-muted">No has añadido ningún disco todavía.</p>
 </div>
 {% else %}
 <div class="card bg-dark border-secondary shadow">
@@ -47,11 +45,9 @@
                 <td><small class="text-info">{{ album.discografica }}</small></td>
                 <td class="text-end">
                     <div class="btn-group btn-group-sm">
-                        <a href="/albumes/{{ album.id }}" class="btn btn-outline-light" title="Ver"><i class="bi bi-eye"></i></a>
-                      {% if isAdmin %}
-                        <a href="/albumes/{{ album.id }}/edit" class="btn btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
-                        <a href="/albumes/{{ album.id }}/delete" class="btn btn-outline-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres destruir este disco?')"><i class="bi bi-trash"></i></a>
-                      {% endif %}
+                        <a href="/admin/albumes/{{ album.id }}" class="btn btn-outline-light" title="Ver"><i class="bi bi-eye"></i></a>
+                        <a href="/admin/albumes/{{ album.id }}/edit" class="btn btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
+                        <a href="/admin/albumes/{{ album.id }}/delete" class="btn btn-outline-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres destruir este disco?')"><i class="bi bi-trash"></i></a>
                     </div>
                 </td>
               </tr>
@@ -62,63 +58,20 @@
     </div>
 </div>
 
-<!-- Controles de Paginación -->
+<!-- Paginación simplificada -->
 {% if page.totalPages > 1 %}
 <nav class="mt-4">
-  <div class="row align-items-center">
-    <div class="col-md-6">
-      <p class="text-secondary mb-0">
-        {% set endItem = (page.number + 1) * page.size %}
-        {% set finalEndItem = endItem > page.totalElements ? page.totalElements : endItem %}
-        Mostrando <span class="text-white">{{ (page.number * page.size) + 1 }}</span> a <span class="text-white">{{ finalEndItem }}</span> de <span class="text-white">{{ page.totalElements }}</span> Albumes
-      </p>
-    </div>
-    <div class="col-md-6">
-      <ul class="pagination justify-content-end mb-0 pagination-sm">
-        <!-- Página anterior -->
-        {% if page.hasPrevious %}
-        <li class="page-item">
-          <a class="page-link bg-dark border-secondary text-white"
-             href="?page={{ page.number - 1 }}&size={{ page.size }}">
-            <i class="bi bi-chevron-left"></i> Anterior
-          </a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-          <span class="page-link bg-dark border-secondary text-muted"><i class="bi bi-chevron-left"></i> Anterior</span>
-        </li>
-        {% endif %}
-
-        <!-- Números de página -->
-        {% for i in range(0, page.totalPages - 1) %}
-        {% if i == page.number %}
-        <li class="page-item active">
-          <span class="page-link bg-danger border-danger text-white">{{ i + 1 }}</span>
-        </li>
-        {% elseif i >= (page.number - 2) and i <= (page.number + 2) %}
-        <li class="page-item">
-          <a class="page-link bg-dark border-secondary text-white"
-             href="?page={{ i }}&size={{ page.size }}">{{ i + 1 }}</a>
-        </li>
-        {% endif %}
-        {% endfor %}
-
-        <!-- Página siguiente -->
-        {% if page.hasNext %}
-        <li class="page-item">
-          <a class="page-link bg-dark border-secondary text-white"
-             href="?page={{ page.number + 1 }}&size={{ page.size }}">
-            Siguiente <i class="bi bi-chevron-right"></i>
-          </a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <span class="page-link bg-dark border-secondary text-muted">Siguiente <i class="bi bi-chevron-right"></i></span>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
-  </div>
+  <ul class="pagination justify-content-center">
+    <li class="page-item {% if not page.hasPrevious %}disabled{% endif %}">
+      <a class="page-link bg-dark border-secondary text-white" href="?page={{ page.number - 1 }}&size={{ page.size }}">Anterior</a>
+    </li>
+    <li class="page-item active">
+      <span class="page-link bg-danger border-danger">{{ page.number + 1 }}</span>
+    </li>
+    <li class="page-item {% if not page.hasNext %}disabled{% endif %}">
+      <a class="page-link bg-dark border-secondary text-white" href="?page={{ page.number + 1 }}&size={{ page.size }}">Siguiente</a>
+    </li>
+  </ul>
 </nav>
 {% endif %}
 

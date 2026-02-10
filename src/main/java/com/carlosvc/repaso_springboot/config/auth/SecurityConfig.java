@@ -1,6 +1,7 @@
 package com.carlosvc.repaso_springboot.config.auth;
 
 import com.carlosvc.repaso_springboot.config.auth.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -106,32 +107,37 @@ public class SecurityConfig {
     return http.build();
   }
 
-    @Bean
-    @Order(4)
-    public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
-        http
-                // Deshabilitamos CSRF temporalmente para probar
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index", "/public/**", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-                        .requestMatchers("/auth/login", "/auth/register").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginPage("/auth/login")
-                        .loginProcessingUrl("/auth/login") // Importante: URL donde se envía el POST
-                        .defaultSuccessUrl("/public/index", true)
-                        .failureUrl("/auth/login?error") // URL si falla el login
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .logoutUrl("/auth/logout")
-                        .logoutSuccessUrl("/public/index")
-                        .permitAll()
-                );
-        return http.build();
-    }
+  @Bean
+  @Order(4)
+  public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
+    http
+      .csrf(AbstractHttpConfigurer::disable)
+      .authorizeHttpRequests(auth -> auth
+        .requestMatchers("/", "/index", "/public/**", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+        .requestMatchers("/auth/login", "/auth/register").permitAll()
+        .anyRequest().authenticated()
+      )
+      // Agregamos la gestión de errores
+      .exceptionHandling(exception -> exception
+        .accessDeniedHandler((request, response, ex) -> {
+          response.sendError(HttpServletResponse.SC_FORBIDDEN); // Muestra un 403 si no tiene acceso
+        })
+      )
+      .formLogin(form -> form
+        .loginPage("/auth/login")
+        .loginProcessingUrl("/auth/login")
+        .defaultSuccessUrl("/public/index", true)
+        .failureUrl("/auth/login?error")
+        .permitAll()
+      )
+      .logout(logout -> logout
+        .logoutUrl("/auth/logout")
+        .logoutSuccessUrl("/public/index")
+        .permitAll()
+      );
 
+    return http.build();
+  }
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();

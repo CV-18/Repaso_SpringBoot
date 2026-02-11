@@ -1,0 +1,73 @@
+### Todos los álbumes
+GRAPHQL http://localhost:3000/graphql
+
+query {
+  albums {
+    id
+    nombre
+    anio
+    banda
+    genero
+    precio
+    uuid
+    discografica {
+      id
+      nombre
+    }
+  }
+}
+
+### Todas las discográficas
+GRAPHQL http://localhost:3000/graphql
+
+query {
+  discograficas {
+    id
+    nombre
+    createdAt
+    albums {
+      id
+      nombre
+    }
+  }
+}
+
+### Discográfica por ID
+GRAPHQL http://localhost:3000/graphql
+
+query {
+  discograficaById(id: "1") {
+    id
+    nombre
+    albums {
+      nombre
+      banda
+    }
+  }
+}
+
+### Buscar discográficas por nombre
+GRAPHQL http://localhost:3000/graphql
+
+query {
+  discograficasByNombre(nombre: "Black") {
+    id
+    nombre
+    albums {
+      nombre
+    }
+  }
+}
+
+### Solo datos principales de álbumes y discográficas
+GRAPHQL http://localhost:3000/graphql
+
+query {
+  albums {
+    nombre
+    banda
+    discografica {
+      nombre
+    }
+  }
+}

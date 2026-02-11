@@ -6,8 +6,6 @@ import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumUpdateDto;
 import com.carlosvc.repaso_springboot.rest.Albumes.models.Album;
 import com.carlosvc.repaso_springboot.rest.Albumes.services.AlbumesService;
 import com.carlosvc.repaso_springboot.web.services.I18nService;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -15,7 +15,7 @@
                 {% if isAuthenticated %}
                     {% if isAdmin %}
                     <li class="nav-item">
-                        <a class="nav-link text-light" href="/admin/albumes">Administración</a>
+                        <a class="nav-link text-light" href="/admin/albumes">{{ message('nav.admin') }}</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-danger fw-bold" href="/admin/albumes/new">
@@ -30,6 +30,27 @@
                 {% endif %}
             </ul>
             <ul class="navbar-nav ms-auto">
+                <!-- Language Switcher -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-light" data-bs-toggle="dropdown" href="#" role="button">
+                        <i class="bi bi-globe"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end border-danger">
+                        <li><a class="dropdown-item" href="?lang=es">
+                            <img alt="ES" src="https://flagcdn.com/w20/es.png" width="20"> Español
+                        </a></li>
+                        <li><a class="dropdown-item" href="?lang=en">
+                            <img alt="EN" src="https://flagcdn.com/w20/gb.png" width="20"> English
+                        </a></li>
+                        <li><a class="dropdown-item" href="?lang=fr">
+                            <img alt="FR" src="https://flagcdn.com/w20/fr.png" width="20"> Français
+                        </a></li>
+                        <li><a class="dropdown-item" href="?lang=de">
+                            <img alt="DE" src="https://flagcdn.com/w20/de.png" width="20"> Deutsch
+                        </a></li>
+                    </ul>
+                </li>
+
                 {% if isAuthenticated %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">

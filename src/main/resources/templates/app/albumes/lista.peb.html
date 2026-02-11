@@ -16,7 +16,6 @@
             <table class="table table-dark table-hover mb-0 align-middle">
               <thead class="table-secondary text-uppercase small">
                   <tr>
-                    <th>ID</th>
                     <th>Nombre</th>
                     <th>Año</th>
                     <th>Banda</th>
@@ -29,7 +28,6 @@
               <tbody>
               {% for album in albumes %}
               <tr>
-                <td class="text-muted">#{{ album.id }}</td>
                 <td class="fw-bold text-white">{{ album.nombre }}</td>
                 <td><span class="badge bg-secondary">{{ album.anio }}</span></td>
                 <td class="text-danger fw-bold">{{ album.banda }}</td>

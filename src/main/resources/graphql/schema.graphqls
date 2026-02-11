@@ -23,10 +23,10 @@ type Album {
     banda: String!
     genero: String!
     precio: Float!
-    uuid: String!             # Identificador UUID unico de la tarjeta (para APIs externas)
-    createdAt: String!        # Fecha y hora de creación (formato ISO 8601)
-    updatedAt: String!        # Fecha y hora de ultima modificación (formato ISO 8601)
-    isDeleted: Boolean!       # Indica si la tarjeta está marcada como eliminada (borrado logico)
+    uuid: String!
+    createdAt: String!
+    updatedAt: String!
+    isDeleted: Boolean!
     discografica: Discograficas!
 
 

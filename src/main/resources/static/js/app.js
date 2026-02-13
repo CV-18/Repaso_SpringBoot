@@ -1,10 +1,13 @@
 document.addEventListener('DOMContentLoaded', () =>{
 
-    // Enlace logout
     const lnkSalir = document.querySelector('#logoutLink');
-    lnkSalir.addEventListener('click',  (event) => {
-        event.preventDefault();
-        document.querySelector('#logoutForm').submit();
-    })
+
+    if (lnkSalir) {
+        lnkSalir.addEventListener('click',  (event) => {
+            event.preventDefault();
+            const form = document.querySelector('#logoutForm');
+            if (form) form.submit();
+        });
+    }
 
 });

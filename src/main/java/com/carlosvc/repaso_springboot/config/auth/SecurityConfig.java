@@ -46,9 +46,6 @@ public class SecurityConfig {
       String[] apiPaths = { "/api/**", "/error/**", "/ws/**", "/graphql", "/graphiql", "/graphiql/**" };
       http
         .securityMatcher(apiPaths)
-        // Podemos decir que forzamos el uso de HTTPS, para algunas rutas de la API o todas
-        // Requerimos HTTPS para todas las peticiones, pero ojo que devuelve 302 para los test
-        // .requiresChannel(channel -> channel.anyRequest().requiresSecure())
 
         // Deshabilitamos CSRF
         .csrf(AbstractHttpConfigurer::disable)
@@ -113,7 +110,7 @@ public class SecurityConfig {
     http
       .csrf(AbstractHttpConfigurer::disable)
       .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/", "/index", "/public/**", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+        .requestMatchers("/", "/index", "/public/**", "/css/**", "/js/**", "/img/**", "/webjars/**").permitAll()
         .requestMatchers("/auth/login", "/auth/register").permitAll()
         .anyRequest().authenticated()
       )

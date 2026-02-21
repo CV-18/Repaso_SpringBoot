@@ -1,4 +1,4 @@
-package com.carlosvc.repaso_springboot.users.services;
+package com.carlosvc.repaso_springboot.rest.users.services;
 
 import com.carlosvc.repaso_springboot.rest.Albumes.repository.AlbumRepository;
 import com.carlosvc.repaso_springboot.rest.users.dto.UserInfoResponse;

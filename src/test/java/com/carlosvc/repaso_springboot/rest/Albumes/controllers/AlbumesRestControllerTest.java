@@ -1,4 +1,4 @@
-package com.carlosvc.repaso_springboot.Albumes.controllers;
+package com.carlosvc.repaso_springboot.rest.Albumes.controllers;
 
 import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumCreateDto;
 import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumResponseDto;
@@ -28,7 +28,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser(username = "admin", roles = {"ADMIN", "USER"})
 class AlbumesRestControllerTest {
     private final String ENDPOINT = "/api/v1/Albumes";
 
@@ -163,7 +162,7 @@ class AlbumesRestControllerTest {
     }
 
     @Test
-    void getById_shouldReturnJsonWithTarjeta_whenValidIdProvided() {
+    void getById_shouldReturnJsonWithAlbum_whenValidIdProvided() {
         Long id = albumResponseDto1.getId();
         when(albumesService.findById(id)).thenReturn(albumResponseDto1);
 

@@ -1,4 +1,4 @@
-package com.carlosvc.repaso_springboot.Discograficas.controller;
+package com.carlosvc.repaso_springboot.rest.Discograficas.controller;
 
 import com.carlosvc.repaso_springboot.rest.Discograficas.dto.DiscograficaRequestDTO;
 import com.carlosvc.repaso_springboot.rest.Discograficas.excepcions.DiscograficaConfictExcepcion;

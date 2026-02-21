@@ -272,15 +272,15 @@ class AlbumesServicesImplTest {
         AlbumUpdateDto albumUpdateDto = AlbumUpdateDto.builder()
                 .precio(precio)
                 .build();
-        
+
         Album albumUpdate = Album.builder().id(1L).precio(precio).build();
-        
+
         when(albumMapper.toAlbum(any(AlbumUpdateDto.class), any(Album.class))).thenReturn(albumUpdate);
         when(albumRepository.save(any(Album.class))).thenReturn(albumUpdate);
 
         AlbumResponseDto expectedAlbumResponseDto = AlbumResponseDto.builder().id(1L).precio(precio).build();
         when(albumMapper.toAlbumResponseDto(any(Album.class))).thenReturn(expectedAlbumResponseDto);
-        
+
         doNothing().when(webSocketHandler).sendMessage(any());
 
         AlbumResponseDto actualAlbumResponse = albumesServices.update(id,albumUpdateDto);

@@ -1,8 +1,7 @@
-package com.carlosvc.repaso_springboot.Albumes.mappers;
+package com.carlosvc.repaso_springboot.rest.Albumes.mappers;
 
 import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumCreateDto;
 import com.carlosvc.repaso_springboot.rest.Albumes.dto.AlbumUpdateDto;
-import com.carlosvc.repaso_springboot.rest.Albumes.mappers.AlbumMapper;
 import com.carlosvc.repaso_springboot.rest.Albumes.models.Album;
 import com.carlosvc.repaso_springboot.rest.Discograficas.models.Discografica;
 import org.junit.jupiter.api.Test;
@@ -105,5 +104,30 @@ class AlbumMapperTest {
 
     @Test
     void testToAlbumResponseDto() {
+      Album album = Album.builder()
+        .id(1L)
+        .nombre("Aske")
+        .anio(1992)
+        .banda("Burzum")
+        .genero("Black Metal")
+        .precio(10.50)
+        .discografica(discografica)
+        .createdAt(LocalDateTime.now())
+        .updatedAt(LocalDateTime.now())
+        .uuid(UUID.randomUUID())
+        .build();
+
+      var resultado = albumMapper.toAlbumResponseDto(album);
+
+      assertAll(
+        () -> assertEquals(album.getId(), resultado.getId()),
+        () -> assertEquals(album.getNombre(), resultado.getNombre()),
+        () -> assertEquals(album.getAnio(), resultado.getAnio()),
+        () -> assertEquals(album.getBanda(), resultado.getBanda()),
+        () -> assertEquals(album.getGenero(), resultado.getGenero()),
+        () -> assertEquals(album.getPrecio(), resultado.getPrecio())
+      );
+
+
     }
 }

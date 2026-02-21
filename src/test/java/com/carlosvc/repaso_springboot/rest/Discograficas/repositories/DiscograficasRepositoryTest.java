@@ -1,4 +1,4 @@
-package com.carlosvc.repaso_springboot.Discograficas.repositories;
+package com.carlosvc.repaso_springboot.rest.Discograficas.repositories;
 
 import com.carlosvc.repaso_springboot.rest.Discograficas.models.Discografica;
 import com.carlosvc.repaso_springboot.rest.Discograficas.repositories.DiscograficasRepository;

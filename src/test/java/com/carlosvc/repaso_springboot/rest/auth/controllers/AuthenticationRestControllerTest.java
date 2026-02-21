@@ -1,4 +1,4 @@
-package com.carlosvc.repaso_springboot.auth.controllers;
+package com.carlosvc.repaso_springboot.rest.auth.controllers;
 
 import com.carlosvc.repaso_springboot.rest.auth.dto.JwtAuthResponse;
 import com.carlosvc.repaso_springboot.rest.auth.dto.UserSignInRequest;

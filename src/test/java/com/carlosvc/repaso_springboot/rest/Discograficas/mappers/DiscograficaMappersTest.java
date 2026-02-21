@@ -1,4 +1,4 @@
-package com.carlosvc.repaso_springboot.Discograficas.mappers;
+package com.carlosvc.repaso_springboot.rest.Discograficas.mappers;
 
 import com.carlosvc.repaso_springboot.rest.Discograficas.dto.DiscograficaRequestDTO;
 import com.carlosvc.repaso_springboot.rest.Discograficas.mappers.DiscograficaMappers;

@@ -1,4 +1,4 @@
-package com.carlosvc.repaso_springboot.users.controllers;
+package com.carlosvc.repaso_springboot.rest.users.controllers;
 
 import com.carlosvc.repaso_springboot.rest.users.dto.UserInfoResponse;
 import com.carlosvc.repaso_springboot.rest.users.dto.UserRequest;
@@ -24,8 +24,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-
-@WithMockUser(username = "admin", password = "admin", roles = {"ADMIN", "USER"})
+// @WithMockUser(username = "admin", password = "admin", roles = {"ADMIN", "USER"})
+@WithUserDetails("admin")
 @SpringBootTest
 @AutoConfigureMockMvc
 class UsersRestControllerTest {
@@ -173,7 +173,7 @@ class UsersRestControllerTest {
            "password": "1234"
            }
           """;
-    when(usersService.save(any(UserRequest.class))).thenReturn(userResponse);
+    // when(usersService.save(any(UserRequest.class))).thenReturn(userResponse);
 
     var result = mockMvcTester.post()
         .uri(ENDPOINT)
@@ -202,7 +202,7 @@ class UsersRestControllerTest {
            "password": "test1234"
            }
           """;
-    when(usersService.save(any(UserRequest.class))).thenReturn(userResponse);
+    // when(usersService.save(any(UserRequest.class))).thenReturn(userResponse);
 
     var result = mockMvcTester.post()
         .uri(ENDPOINT)
